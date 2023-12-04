@@ -25,6 +25,9 @@ router.get('/reservations', controllers.getAllReservations);
 router.get('/reservations/:id', controllers.getReservationById);
 router.post('/reservations', controllers.addReservation);
 
+router.post('/login', controllers.userLogin); 
+router.post('/signup', controllers.userSignUp); 
+
 router.get('/search', controllers.searchFlights);
 
 module.exports = router;
