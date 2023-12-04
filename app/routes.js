@@ -25,4 +25,6 @@ router.get('/reservations', controllers.getAllReservations);
 router.get('/reservations/:id', controllers.getReservationById);
 router.post('/reservations', controllers.addReservation);
 
+router.get('/search', controllers.searchFlights);
+
 module.exports = router;

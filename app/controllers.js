@@ -267,6 +267,45 @@ const addReservation = (req, res) => {
     });
 };
 
+const searchFlights = (req, res) => {
+  const { departureTownId, destinationTownId, departureDate, returnDate } = req.query;
+
+  if (!departureTownId || !destinationTownId || !departureDate || !returnDate) {
+    return res.status(400).json({
+      status: "failed",
+      message:
+        "All parameters (departureTownId, destinationTownId, departureDate, returnDate) are required.",
+    });
+  }
+
+  db.query(
+    'SELECT * FROM flight AS f ' +
+    'JOIN airport AS a ON f.departureAirport_ID = a.airport_ID ' +
+    'JOIN town AS t ON a.town_id = t.town_ID ' +
+    'WHERE ' +
+    ' f.departureAirport_ID = ? ' +
+    ' AND f.destinationAirport_ID = ? ' + 
+    ' AND DATE(f.departureTimeDate) = ? '+ 
+    ' AND DATE(f.arrivalTimeDate)0 = ? ',
+    [departureTownId, destinationTownId, departureDate, returnDate],
+    (err, data) => {
+      if (err) {
+        return res.status(500).json({
+          status: "failed to search flights",
+          message: err.message,
+        });
+      }
+      res.status(200).json({
+        status: "success",
+        results: data.length,
+        data: {
+          flights: data,
+        },
+      });
+    }
+  );
+};
+
 module.exports = {
     getHome,
     getAllAirports,
@@ -284,4 +323,5 @@ module.exports = {
     getAllReservations,
     getReservationById,
     addReservation,
+    searchFlights
 };
