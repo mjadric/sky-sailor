@@ -12,264 +12,314 @@ const getHome = (req, res) => {
     });
 };
 
-const getAllAirports = (req, res) => {
-    db.query('SELECT * FROM AIRPORT', (err, data) => {
-      if (err) {
-        return res.status(404).json({
-          status: 'failed to get all airports',
-          message: err.message,
-        });
-      }
-      res.status(200).json({
-        status: 'success',
-        results: data.length,
-        data: {
-          airports: data,
-        },
-      });
+const getAllAirports = async (req, res) => {
+  try {
+    const [data] = await db.promise().query("SELECT * FROM AIRPORT");
+
+    res.status(200).json({
+      status: "success",
+      results: data.length,
+      data: {
+        airports: data,
+      },
     });
+  } catch (err) {
+    res.status(500).json({
+      status: "failed to get all airports",
+      message: err.message,
+    });
+  }
 };
 
-const getAirportById = (req, res) => {
-    db.query(`SELECT * FROM AIRPORT WHERE airport_ID = ${req.params.id}`, (err, data) => {
-      if (err) {
-        return res.status(404).json({
-          status: 'failed to get airport',
-          message: err.message,
-        });
-      }
-      res.status(200).json({
-        status: 'success',
-        data: {
-          airport: data,
-        },
+const getAirportById = async (req, res) => {
+  try {
+    const [data] = await db.promise().query(`SELECT * FROM AIRPORT WHERE airport_ID = ${req.params.id}`);
+
+    if (data.length === 0) {
+      return res.status(404).json({
+        status: "failed to get airport",
+        message: "Airport not found",
       });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        airport: data,
+      },
     });
+  } catch (err) { 
+    return res.status(500).json({
+      status: "failed to get airport",
+      message: err.message,
+    });
+  };
 };
 
-const addAirport = (req, res) => {
-    db.query('INSERT INTO AIRPORT SET ?', req.body, (err, data) => {
-      if (err) {
-        return res.status(404).json({
-          status: 'failed to add airport',
-          message: err.message,
-        });
-      }
-      res.status(200).json({
-        status: 'success',
-        data: {
-          airport: data,
-        },
-      });
+const addAirport = async (req, res) => {
+  try {
+    const [data] = await db.promise().query("INSERT INTO AIRPORT SET ?", req.body);
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        airport: data,
+      },
     });
+  } catch (err) { 
+    return res.status(500).json({
+      status: "failed to add airport",
+      message: err.message,
+    });
+  };
 };
 
-const getAllPlanes = (req, res) => {
-    db.query('SELECT * FROM PLANE', (err, data) => {
-      if (err) {
-        return res.status(404).json({
-          status: 'failed to get all planes',
-          message: err.message,
-        });
-      }
-      res.status(200).json({
-        status: 'success',
-        results: data.length,
-        data: {
-          planes: data,
-        },
-      });
+const getAllPlanes = async (req, res) => {
+  try { 
+    const [data] = await db.promise().query("SELECT * FROM PLANE");
+
+    res.status(200).json({
+      status: "success",
+      results: data.length,
+      data: {
+        planes: data,
+      },
     });
+  } catch (err) { 
+    return res.status(500).json({
+      status: "failed to get all planes",
+      message: err.message,
+    });
+  };
 };
 
-const getPlaneById = (req, res) => {
-    db.query(`SELECT * FROM PLANE WHERE plane_ID = ${req.params.id}`, (err, data) => {
-      if (err) {
-        return res.status(404).json({
-          status: 'failed to get plane',
-          message: err.message,
-        });
-      }
-      res.status(200).json({
-        status: 'success',
-        data: {
-          plane: data,
-        },
+const getPlaneById = async (req, res) => {
+  try {
+    const [data] = await db.promise().query(`SELECT * FROM PLANE WHERE plane_ID = ${req.params.id}`);
+
+    if (data.length === 0) {
+      return res.status(404).json({
+        status: "failed to get plane",
+        message: "Plane not found",
       });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        plane: data,
+      },
     });
+  } catch (err) {
+    return res.status(500).json({
+      status: "failed to get plane",
+      message: err.message,
+    });
+  };
 };
 
-const addPlane = (req, res) => {
-    db.query('INSERT INTO PLANE SET ?', req.body, (err, data) => {
-      if (err) {
-        return res.status(404).json({
-          status: 'failed to add plane',
-          message: err.message,
-        });
-      }
-      res.status(200).json({
-        status: 'success',
-        data: {
-          plane: data,
-        },
-      });
+const addPlane = async (req, res) => {
+  try {
+    const [data] = await db.promise().query("INSERT INTO PLANE SET ?", req.body);
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        plane: data,
+      },
     });
+  } catch (err) {
+    return res.status(500).json({
+      status: "failed to add plane",
+      message: err.message,
+    });
+  };
 };
 
-const getAllAccounts = (req, res) => {
-    db.query('SELECT * FROM ACCOUNT', (err, data) => {
-      if (err) {
-        return res.status(404).json({
-          status: 'failed to get all accounts',
-          message: err.message,
-        });
-      }
-      res.status(200).json({
-        status: 'success',
-        results: data.length,
-        data: {
-          accounts: data,
-        },
-      });
+const getAllAccounts = async (req, res) => {
+  try {
+    const [data] = await db.promise().query("SELECT * FROM ACCOUNT");
+
+    res.status(200).json({
+      status: "success",
+      results: data.length,
+      data: {
+        accounts: data,
+      },
     });
+  } catch (err) { 
+    return res.status(500).json({
+      status: "failed to get all accounts",
+      message: err.message,
+    });
+  };
 };
 
-const getAccountById = (req, res) => {
-    db.query(`SELECT * FROM ACCOUNT WHERE account_ID = ${req.params.id}`, (err, data) => {
-      if (err) {
-        return res.status(404).json({
-          status: 'failed to get account',
-          message: err.message,
-        });
-      }
-      res.status(200).json({
-        status: 'success',
-        data: {
-          account: data,
-        },
+const getAccountById = async (req, res) => {
+  try {
+    const [data] = await db.promise().query(`SELECT * FROM ACCOUNT WHERE account_ID = ${req.params.id}`);
+
+    if (data.length === 0) {
+      return res.status(404).json({
+        status: "failed to get account",
+        message: "Account not found",
       });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        account: data,
+      },
     });
+  } catch (err) {
+    return res.status(500).json({
+      status: "failed to get account",
+      message: err.message,
+    });
+  };
 };
 
-const addAccount = (req, res) => {
-    db.query('INSERT INTO ACCOUNT SET ?', req.body, (err, data) => {
-      if (err) {
-        return res.status(404).json({
-          status: 'failed to add account',
-          message: err.message,
-        });
-      }
-      res.status(200).json({
-        status: 'success',
-        data: {
-          account: data,
-        },
-      });
+const addAccount = async (req, res) => {
+  try {
+    const [data] = await db.promise().query("INSERT INTO ACCOUNT SET ?", req.body);
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        account: data,
+      },
     });
+  } catch (err) {
+    return res.status(500).json({
+      status: "failed to add account",
+      message: err.message,
+    });
+  };
 };
 
-const getAllFlights = (req, res) => {
-    db.query('SELECT * FROM FLIGHT', (err, data) => {
-      if (err) {
-        return res.status(404).json({
-          status: 'failed to get all flights',
-          message: err.message,
-        });
-      }
-      res.status(200).json({
-        status: 'success',
-        results: data.length,
-        data: {
-          flights: data,
-        },
-      });
+const getAllFlights = async (req, res) => {
+  try {
+    const [data] = await db.promise().query("SELECT * FROM FLIGHT");
+
+    res.status(200).json({
+      status: "success",
+      results: data.length,
+      data: {
+        flights: data,
+      },
     });
+  } catch (err) {
+    return res.status(500).json({
+      status: "failed to get all flights",
+      message: err.message,
+    });
+  };
 };
 
-const getFlightById = (req, res) => {
-    db.query(`SELECT * FROM FLIGHT WHERE flight_ID = ${req.params.id}`, (err, data) => {
-      if (err) {
-        return res.status(404).json({
-          status: 'failed to get flight',
-          message: err.message,
-        });
-      }
-      res.status(200).json({
-        status: 'success',
-        data: {
-          flight: data,
-        },
+const getFlightById = async (req, res) => {
+  try { 
+    const [data] = await db.promise().query(`SELECT * FROM FLIGHT WHERE flight_ID = ${req.params.id}`);
+
+    if (data.length === 0) {
+      return res.status(404).json({
+        status: "failed to get flight",
+        message: "Flight not found",
       });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        flight: data,
+      },
     });
+  } catch (err) {
+    return res.status(500).json({
+      status: "failed to get flight",
+      message: err.message,
+    });
+  };
 };
 
-const addFlight = (req, res) => {
-    db.query('INSERT INTO FLIGHT SET ?', req.body, (err, data) => {
-      if (err) {
-        return res.status(404).json({
-          status: 'failed to add flight',
-          message: err.message,
-        });
-      }
-      res.status(200).json({
-        status: 'success',
-        data: {
-          flight: data,
-        },
-      });
+const addFlight = async (req, res) => {
+  try {
+    const [data] = await db.promise().query("INSERT INTO FLIGHT SET ?", req.body);
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        flight: data,
+      },
     });
+  } catch (err) {
+    return res.status(500).json({
+      status: "failed to add flight",
+      message: err.message,
+    });
+  };
 };
 
-const getAllReservations = (req, res) => {
-    db.query('SELECT * FROM RESERVATION', (err, data) => {
-      if (err) {
-        return res.status(404).json({
-          status: 'failed to get all reservations',
-          message: err.message,
-        });
-      }
-      res.status(200).json({
-        status: 'success',
-        results: data.length,
-        data: {
-          reservations: data,
-        },
-      });
+const getAllReservations = async (req, res) => {
+  try {
+    const [data] = await db.promise().query("SELECT * FROM RESERVATION");
+
+    res.status(200).json({
+      status: "success",
+      results: data.length,
+      data: {
+        reservations: data,
+      },
     });
+  } catch {
+    return res.status(500).json({
+      status: "failed to get all reservations",
+      message: err.message,
+    });
+  }
 };
 
-const getReservationById = (req, res) => {
-    db.query(`SELECT * FROM RESERVATION WHERE reservation_ID = ${req.params.id}`, (err, data) => {
-      if (err) {
-        return res.status(404).json({
-          status: 'failed to get reservation',
-          message: err.message,
-        });
-      }
-      res.status(200).json({
-        status: 'success',
-        data: {
-          reservation: data,
-        },
+const getReservationById = async (req, res) => {
+  try {
+    const [data] = await db.promise().query(`SELECT * FROM RESERVATION WHERE reservation_ID = ${req.params.id}`);
+
+    if (data.length === 0) {
+      return res.status(404).json({
+        status: "failed to get reservation",
+        message: "Reservation not found",
       });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        reservation: data,
+      },
     });
+  } catch (err) { 
+    return res.status(500).json({
+      status: "failed to get reservation",
+      message: err.message,
+    });
+  };
 };
 
-const addReservation = (req, res) => {
-    db.query('INSERT INTO RESERVATION SET ?', req.body, (err, data) => {
-      if (err) {
-        return res.status(404).json({
-          status: 'failed to add reservation',
-          message: err.message,
-        });
-      }
-      res.status(200).json({
-        status: 'success',
-        data: {
-          reservation: data,
-        },
-      });
+const addReservation = async (req, res) => {
+  try {
+    const [data] = await db.promise().query("INSERT INTO RESERVATION SET ?", req.body);
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        reservation: data,
+      },
     });
+  } catch {
+    return res.status(500).json({
+      status: "failed to add reservation",
+      message: err.message,
+    });
+  };
 };
 
 const userSignUp = async (req, res) => {
