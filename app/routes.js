@@ -1,33 +1,36 @@
-const express = require('express');
-const controllers = require('./controllers');
+const express = require("express");
+
+const homeController = require("./controllers/homeController");
+const flightController = require("./controllers/flightController");
+const accountController = require("./controllers/accountController");
+const airportController = require("./controllers/airportController");
+const planeController = require("./controllers/planeController");
+const reservationController = require("./controllers/reservationController");
 
 const router = express.Router();
 
-router.get('/', controllers.getHome);
+router.get("/", homeController.getHome);
 
-router.get('/airports', controllers.getAllAirports);
-router.get('/airports/:id', controllers.getAirportById);
-router.post('/airports', controllers.addAirport);
+router.get("/airports", airportController.getAllAirports);
+router.get("/airports/:id", airportController.getAirportById);
+router.post("/airports", airportController.addAirport);
 
-router.get('/planes', controllers.getAllPlanes);
-router.get('/planes/:id', controllers.getPlaneById);
-router.post('/planes', controllers.addPlane);
+router.get("/planes", planeController.getAllPlanes);
+router.get("/planes/:id", planeController.getPlaneById);
+router.post("/planes", planeController.addPlane);
 
-router.get('/accounts', controllers.getAllAccounts);
-router.get('/accounts/:id', controllers.getAccountById);
-router.post('/accounts', controllers.addAccount);
+router.get("/accounts", accountController.getAllAccounts);
+router.get("/accounts/:id", accountController.getAccountById);
+router.post("/accounts", accountController.addAccount);
+router.post("/login", accountController.userLogin);
+router.post("/signup", accountController.userSignUp);
 
-router.get('/flights', controllers.getAllFlights);
-router.get('/flights/:id', controllers.getFlightById);
-router.post('/flights', controllers.addFlight);
+router.get("/flights", flightController.getAllFlights);
+router.get("/flights/:id", flightController.getFlightById);
+router.post("/flights", flightController.addFlight);
 
-router.get('/reservations', controllers.getAllReservations);
-router.get('/reservations/:id', controllers.getReservationById);
-router.post('/reservations', controllers.addReservation);
-
-router.post('/login', controllers.userLogin); 
-router.post('/signup', controllers.userSignUp); 
-
-
+router.get("/reservations", reservationController.getAllReservations);
+router.get("/reservations/:id", reservationController.getReservationById);
+router.post("/reservations", reservationController.addReservation);
 
 module.exports = router;
