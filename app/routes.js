@@ -6,6 +6,7 @@ const accountController = require("./controllers/accountController");
 const airportController = require("./controllers/airportController");
 const planeController = require("./controllers/planeController");
 const reservationController = require("./controllers/reservationController");
+const townController = require("./controllers/townController");
 
 const router = express.Router();
 
@@ -33,6 +34,8 @@ router.get("/reservations", reservationController.getAllReservations);
 router.get("/reservations/:id", reservationController.getReservationById);
 router.post("/reservations", reservationController.addReservation);
 
-router.get("/search", controllers.searchFlights);
+router.get("/towns", townController.getTownsByName);
+
+router.get("/search", flightController.searchFlights);
 
 module.exports = router;

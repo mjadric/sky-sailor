@@ -66,8 +66,50 @@ const addFlight = async (req, res) => {
   }
 };
 
+const searchFlights = async (req, res) => {
+  const { departureTownId, destinationTownId, departureDate, returnDate } =
+    req.query;
+
+  if (!departureTownId || !destinationTownId || !departureDate) {
+    return res.status(400).json({
+      status: "failed",
+      message:
+        "Parameters (departureTownId, destinationTownId, departureDate) are required.",
+    });
+  }
+
+  try {
+    let query =
+      "SELECT * FROM flight AS f " +
+      "JOIN airport AS a ON f.departureAirport_ID = a.airport_ID " +
+      "JOIN town AS t ON a.town_id = t.town_ID " +
+      "WHERE " +
+      " f.departureAirport_ID = ? " +
+      " AND f.destinationAirport_ID = ? " +
+      " AND DATE(f.departureTimeDate) = ? ";
+
+    const [rows, fields] = await db
+      .promise()
+      .query(query, [departureTownId, destinationTownId, departureDate]);
+
+    res.status(200).json({
+      status: "success",
+      results: rows.length,
+      data: {
+        flights: rows,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "failed to search flights",
+      message: err.message,
+    });
+  }
+};
+
 module.exports = {
   getAllFlights,
   getFlightById,
   addFlight,
+  searchFlights,
 };
