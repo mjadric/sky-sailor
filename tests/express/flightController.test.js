@@ -75,6 +75,20 @@ describe("Flight controller test cases", () => {
     expect(db.promise().query).toHaveBeenCalledWith("SELECT * FROM FLIGHT");
   });
 
+  it("GET /flights - error during retrieval", async () => {
+    db.promise().query.mockRejectedValueOnce(new Error("database error"));
+
+    const response = await request(app).get("/api/flights").send();
+
+    expect(response.status).toBe(500);
+    expect(response.body).toEqual({
+      status: "failed to get all flights",
+      message: "database error",
+    });
+
+    expect(db.promise().query).toHaveBeenCalledWith("SELECT * FROM FLIGHT");
+  });
+
   it("GET /flights/:id", async () => {
     const flight_ID = 50;
     const mockFlight = mockData[0];
@@ -89,6 +103,40 @@ describe("Flight controller test cases", () => {
       data: {
         flight: mockFlight,
       },
+    });
+
+    expect(db.promise().query).toHaveBeenCalledWith(
+      `SELECT * FROM FLIGHT WHERE flight_ID = ${flight_ID}`
+    );
+  });
+
+  it("GET /flights/:id - flight not found", async () => {
+    const flight_ID = 666;
+    db.promise().query.mockResolvedValueOnce([[]]);
+
+    const response = await request(app).get(`/api/flights/${flight_ID}`).send();
+
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual({
+      status: "failed to get flight",
+      message: "Flight not found",
+    });
+
+    expect(db.promise().query).toHaveBeenCalledWith(
+      `SELECT * FROM FLIGHT WHERE flight_ID = ${flight_ID}`
+    );
+  });
+
+  it("GET /flights/:id - error during retrieval", async () => {
+    const flight_ID = 50;
+    db.promise().query.mockRejectedValueOnce(new Error("database error"));
+
+    const response = await request(app).get(`/api/flights/${flight_ID}`).send();
+
+    expect(response.status).toBe(500);
+    expect(response.body).toEqual({
+      status: "failed to get flight",
+      message: "database error",
     });
 
     expect(db.promise().query).toHaveBeenCalledWith(
@@ -129,6 +177,38 @@ describe("Flight controller test cases", () => {
     );
   });
 
+  it("POST /flights - insertion failure", async () => {
+    const newFlight = {
+      departureTimeDate: "2023-01-09T12:00:00.000Z",
+      arrivalTimeDate: "2023-01-09T16:00:00.000Z",
+      timeZone: "CET",
+      plane_ID: 3,
+      departureAirport_ID: 6,
+      destinationAirport_ID: 7,
+      flightInsurancePrice: "0.00",
+      timezone_ID: 6,
+      arrivalTimeZone_ID: 6,
+      departureTimeZone_ID: 6,
+    };
+
+    db.promise().query.mockRejectedValueOnce(
+      new Error("Field 'extraBaggagePrice' doesn't have a default value")
+    );
+
+    const response = await request(app).post("/api/flights").send(newFlight);
+
+    expect(response.status).toBe(500);
+    expect(response.body).toEqual({
+      status: "failed to add flight",
+      message: "Field 'extraBaggagePrice' doesn't have a default value",
+    });
+
+    expect(db.promise().query).toHaveBeenCalledWith(
+      "INSERT INTO FLIGHT SET ?",
+      newFlight
+    );
+  });
+
   it("GET /search", async () => {
     const departureTownId = 1;
     const destinationTownId = 2;
@@ -149,6 +229,46 @@ describe("Flight controller test cases", () => {
       data: {
         flights: mockSearchResults,
       },
+    });
+
+    expect(db.promise().query).toHaveBeenCalledWith(
+      "CALL flight_search(?, ?, ?)",
+      [
+        String(departureTownId),
+        String(destinationTownId),
+        String(departureDate),
+      ]
+    );
+  });
+
+  it("GET /search - missing query params", async () => {
+    const response = await request(app)
+      .get("/api/search")
+      .query({ departureTownId: 1 });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      status: "failed",
+      message:
+        "All parameters (departureTownId, destinationTownId, departureDate) are required.",
+    });
+  });
+
+  it("GET /search - error during retrieval", async () => {
+    const departureTownId = 1;
+    const destinationTownId = 2;
+    const departureDate = "2023-01-09";
+
+    db.promise().query.mockRejectedValueOnce(new Error("database error"));
+
+    const response = await request(app)
+      .get("/api/search")
+      .query({ departureTownId, destinationTownId, departureDate });
+
+    expect(response.status).toBe(500);
+    expect(response.body).toEqual({
+      status: "failed to search flights",
+      message: "database error",
     });
 
     expect(db.promise().query).toHaveBeenCalledWith(
