@@ -66,8 +66,44 @@ const addFlight = async (req, res) => {
   }
 };
 
+const searchFlights = async (req, res) => {
+  const { departureTownId, destinationTownId, departureDate } = req.query;
+
+  if (!departureTownId || !destinationTownId || !departureDate) {
+    return res.status(400).json({
+      status: "failed",
+      message:
+        "All parameters (departureTownId, destinationTownId, departureDate) are required.",
+    });
+  }
+
+  try {
+    const [rows, fields] = await db
+      .promise()
+      .query("CALL flight_search(?, ?, ?)", [
+        departureTownId,
+        destinationTownId,
+        departureDate,
+      ]);
+
+    res.status(200).json({
+      status: "success",
+      results: rows.length,
+      data: {
+        flights: rows,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "failed to search flights",
+      message: err.message,
+    });
+  }
+};
+
 module.exports = {
   getAllFlights,
   getFlightById,
   addFlight,
+  searchFlights,
 };
