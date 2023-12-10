@@ -19,9 +19,8 @@ const RegistrationPage = () => {
         handleInputChange={handleInputChange}
         handleSubmit={handleSubmit}
         handleLoginRedirect={handleLoginRedirect}
+        errorMessage={errorMessage} 
       />
-      {isRegistered && <p>Registration successful!</p>}
-      {errorMessage && <p>Error: {errorMessage}</p>}
     </div>
   );
 };

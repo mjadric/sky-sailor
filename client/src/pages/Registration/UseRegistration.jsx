@@ -1,4 +1,3 @@
-// UseRegistration.js
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -23,38 +22,38 @@ const useRegistration = () => {
   };
 
   const redirectToLogin = () => {
+    console.log('Redirecting to login page...');
     navigate('/login');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const requiredFields = ['email', 'password', 'firstName', 'lastName'];
     const missingFields = requiredFields.filter((field) => !formData[field]);
-  
+
     if (missingFields.length > 0) {
-      setErrorMessage(`Please fill in all required fields: ${missingFields.join(', ')}`);
+      setErrorMessage(`Please fill in all required fields`);
       return;
     }
-  
+
     try {
       const response = await axios.post('http://localhost:8800/api/signup', formData);
-  
+
       if (response.data.success) {
-        setIsRegistered(true);
-        setErrorMessage('');
-        redirectToLogin();
-      } else {
-        setIsRegistered(false);
-        setErrorMessage(response.data.error || 'Registration failed.');
+        setIsRegistered(false);  
+        setErrorMessage('');     
       }
     } catch (error) {
-      console.error('Registration Error:', error.response ? error.response.data : error.message);
-      setIsRegistered(false);
-      setErrorMessage('Internal server error.');
+      if (error.response && error.response.status === 409) {
+        setIsRegistered(true); 
+        setErrorMessage('User already exists. Please log in.');
+      } else {
+        setIsRegistered(false); 
+        setErrorMessage('Internal server error.');
+      }
     }
   };
-  
 
   return {
     formData,

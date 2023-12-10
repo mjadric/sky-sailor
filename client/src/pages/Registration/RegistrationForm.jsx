@@ -1,6 +1,6 @@
 import React from 'react';
 
-const RegistrationForm = ({ formData, handleInputChange, handleSubmit, handleLoginRedirect, errorMessage }) => {
+const RegistrationForm = ({ formData, isRegistered, handleInputChange, handleSubmit, handleLoginRedirect, errorMessage }) => {
   return (
     <section className="text-center text-lg-start">
       <style>
@@ -34,6 +34,7 @@ const RegistrationForm = ({ formData, handleInputChange, handleSubmit, handleLog
               <div className="card-body p-5 shadow-5 text-center">
                 <h2 className="fw-bold mb-5">Sign up now</h2>
                 {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+                {isRegistered && <p>User is already registered. Please log in.</p>}
                 <form onSubmit={handleSubmit}>
                   <div className="row">
                     <div className="col-md-6 mb-4">
@@ -102,10 +103,10 @@ const RegistrationForm = ({ formData, handleInputChange, handleSubmit, handleLog
 
                   <p className="mb-0">
                     Already have an account?{' '}
-                   <button type="button" className="btn btn-link" onClick={handleLoginRedirect}>
-                   Login
-                   </button>
-                 </p>
+                    <button type="button" className="btn btn-link" onClick={handleLoginRedirect}>
+                      Login
+                    </button>
+                  </p>
 
                 </form>
               </div>
