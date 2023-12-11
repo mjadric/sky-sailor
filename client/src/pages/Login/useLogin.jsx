@@ -1,51 +1,64 @@
-// useLogin.jsx
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const useLogin = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'email') {
-      setEmail(value);
-    } else if (name === 'password') {
-      setPassword(value);
-    }
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   const redirectToRegistration = () => {
-    navigate('/registration', { replace: true });
+    console.log('Redirecting to registration page...');
+    navigate('/registration');
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    const requiredFields = ['email', 'password'];
+    const missingFields = requiredFields.filter((field) => !formData[field]);
+  
+    if (missingFields.length > 0) {
+      setErrorMessage('Please fill in all required fields');
+      return;
+    }
+  
     try {
-      const response = await axios.post('http://localhost:8800/api/login', { email, password });
-      console.log('Server Response:', response.data);
-
+      const response = await axios.post('http://localhost:8800/api/login', formData);
+    
       if (response.data.success) {
-        console.log('Login successful!');
-        // Ovdje možete dodati dodatne radnje nakon uspješne prijave
-      } else {
-        console.log('Login failed:', response.data.error);
-        setErrorMessage(response.data.error || 'Login failed.');
+        setIsLoggedIn(true);
+        setErrorMessage('');
+        // Redirect to the landingpage kad bude napravljena
+        // navigate('/landingpage');
       }
     } catch (error) {
-      console.error('Login Error:', error.response ? error.response.data : error.message);
+      setErrorMessage('Account does not exist.');
+      setIsLoggedIn(false);
     }
+    
   };
+  
 
   return {
-    email,
-    password,
+    formData,
+    isLoggedIn,
+    errorMessage,
     handleInputChange,
     handleSubmit,
     handleRegistrationRedirect: redirectToRegistration,
-    errorMessage,
   };
 };
 

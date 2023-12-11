@@ -1,4 +1,3 @@
-import React from 'react';
 import RegistrationForm from './RegistrationForm';
 import useRegistration from './UseRegistration';
 
@@ -20,6 +19,7 @@ const RegistrationPage = () => {
         handleSubmit={handleSubmit}
         handleLoginRedirect={handleLoginRedirect}
         errorMessage={errorMessage} 
+        isRegistered={isRegistered}
       />
     </div>
   );

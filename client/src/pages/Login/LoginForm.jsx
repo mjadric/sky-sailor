@@ -1,5 +1,3 @@
-import React from 'react';
-
 const LoginForm = ({ email, password, handleInputChange, handleSubmit, handleRegistrationRedirect, errorMessage }) => {
   return (
     <section className="text-center text-lg-start">

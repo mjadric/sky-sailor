@@ -33,7 +33,7 @@ const useRegistration = () => {
     const missingFields = requiredFields.filter((field) => !formData[field]);
 
     if (missingFields.length > 0) {
-      setErrorMessage(`Please fill in all required fields`);
+      setErrorMessage('Please fill in all required fields');
       return;
     }
 
@@ -41,15 +41,16 @@ const useRegistration = () => {
       const response = await axios.post('http://localhost:8800/api/signup', formData);
 
       if (response.data.success) {
-        setIsRegistered(false);  
-        setErrorMessage('');     
+        setIsRegistered(true);
+        setErrorMessage('');
+        redirectToLogin();
       }
     } catch (error) {
       if (error.response && error.response.status === 409) {
-        setIsRegistered(true); 
+        setIsRegistered(false);
         setErrorMessage('User already exists. Please log in.');
       } else {
-        setIsRegistered(false); 
+        setIsRegistered(false);
         setErrorMessage('Internal server error.');
       }
     }

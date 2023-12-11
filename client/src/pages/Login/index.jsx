@@ -1,24 +1,25 @@
-import React from 'react';
-import LoginForm from './LoginForm';
-import useLogin from './useLogin';
+import LoginForm from './LoginForm'; 
+import useLogin from './useLogin'; 
 
 const LoginPage = () => {
   const {
-    email,
-    password,
+    formData,
+    isLoggedIn,
+    errorMessage,
     handleInputChange,
     handleSubmit,
-    handleRegistrationRedirect,
-  } = useLogin();
+    handleRegistrationRedirect, 
+  } = useLogin(); 
 
   return (
     <div>
       <LoginForm
-        email={email}
-        password={password}
+        formData={formData}
         handleInputChange={handleInputChange}
         handleSubmit={handleSubmit}
         handleRegistrationRedirect={handleRegistrationRedirect}
+        errorMessage={errorMessage}
+        isLoggedIn={isLoggedIn} 
       />
     </div>
   );
