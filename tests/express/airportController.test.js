@@ -37,6 +37,20 @@ describe("Airport controller", () => {
     expect(db.query).toHaveBeenCalledWith("SELECT * FROM AIRPORT");
   });
 
+  it("GET /airports - no airports found", async () => {
+    db.query.mockResolvedValueOnce([[]]);
+
+    const res = await request(app).get("/api/airports").send();
+
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toEqual({
+      status: "failed to get all airports",
+      message: "No airports found",
+    });
+
+    expect(db.query).toHaveBeenCalledWith("SELECT * FROM AIRPORT");
+  });
+
   it("GET /airports - error during retrieval", async () => {
     db.query.mockRejectedValueOnce(new Error("database error"));
 
@@ -90,6 +104,23 @@ describe("Airport controller", () => {
     );
   });
 
+  it("GET /airports/:id - error during retrieval", async () => {
+    const airport_ID = 1;
+    db.query.mockRejectedValueOnce(new Error("database error"));
+
+    const res = await request(app).get(`/api/airports/${airport_ID}`).send();
+
+    expect(res.statusCode).toBe(500);
+    expect(res.body).toEqual({
+      status: "failed to get airport",
+      message: "database error",
+    });
+
+    expect(db.query).toHaveBeenCalledWith(
+      `SELECT * FROM AIRPORT WHERE airport_ID = ${airport_ID}`
+    );
+  });
+
   it("POST /airports", async () => {
     const mockAirport = mockData[0];
 
@@ -111,8 +142,25 @@ describe("Airport controller", () => {
     );
   });
 
-  it("POST /airports - error during insertion", async () => {
+  it("POST /airports - invalid town ID", async () => {
     const mockAirport = mockData[0];
+    mockAirport.town_ID = "invalid";
+
+    const res = await request(app).post("/api/airports").send(mockAirport);
+
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toEqual({
+      status: "failed to add airport",
+      message: "Invalid town ID",
+    });
+
+    expect(db.query).not.toHaveBeenCalled();
+  });
+
+  it("POST /airports - error during insertion", async () => {
+    const mockAirport = {
+      town_ID: 3,
+    };
 
     db.query.mockRejectedValueOnce(new Error("database error"));
 
