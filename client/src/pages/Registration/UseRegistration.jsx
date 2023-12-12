@@ -22,7 +22,6 @@ const useRegistration = () => {
   };
 
   const redirectToLogin = () => {
-    console.log('Redirecting to login page...');
     navigate('/login');
   };
 

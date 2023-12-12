@@ -27,7 +27,6 @@ const userSignUp = async (req, res) => {
       res.status(500).json({ success: false, error: "Registration failed. Please try again." });
     }
   } catch (error) {
-    console.error("Server error:", error);
     res.status(500).json({ success: false, error: "Internal server error." });
   }
 };
@@ -39,7 +38,6 @@ const userLogin = async (req, res) => {
     const [results] = await db
       .promise()
       .query("SELECT * FROM account WHERE email = ?", [email]);
-    console.log("Database query results:", results);
 
     if (results.length === 0) {
       return res.status(401).json({ success: false, error: "Account doesn't exist" });
@@ -47,10 +45,7 @@ const userLogin = async (req, res) => {
 
     const user = results[0];
 
-    console.log("User data from the database:", user);
-
     const passwordMatch = await bcrypt.compare(password, user.passwordHash);
-    console.log("Password match:", passwordMatch);
 
     if (!passwordMatch) {
       return res.status(401).json({ success: false, error: "Invalid login credentials." });
@@ -62,7 +57,6 @@ const userLogin = async (req, res) => {
 
     res.status(200).json({ success: true, token });
   } catch (error) {
-    console.error("Server error:", error);
     res.status(500).json({ success: false, error: "Internal server error." });
   }
 };
@@ -127,12 +121,15 @@ const addAccount = async (req, res) => {
       },
     });
   } catch (err) {
-    return res.status(500).json({
+    console.error("Error adding account:", err); // Dodano ispisivanje pogreške u konzoli radi debagiranja
+
+    res.status(500).json({
       status: "failed to add account",
       message: err.message,
     });
   }
 };
+
 
 module.exports = {
   userSignUp,

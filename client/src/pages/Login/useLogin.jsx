@@ -20,7 +20,6 @@ const useLogin = () => {
   };
 
   const redirectToRegistration = () => {
-    console.log('Redirecting to registration page...');
     navigate('/registration');
   };
 
