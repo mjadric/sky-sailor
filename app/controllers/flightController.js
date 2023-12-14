@@ -46,28 +46,8 @@ const getFlightById = async (req, res) => {
   }
 };
 
-const addFlight = async (req, res) => {
-  try {
-    const [data] = await db
-      .promise()
-      .query("INSERT INTO FLIGHT SET ?", req.body);
-
-    res.status(200).json({
-      status: "success",
-      data: {
-        flight: data,
-      },
-    });
-  } catch (err) {
-    return res.status(500).json({
-      status: "failed to add flight",
-      message: err.message,
-    });
-  }
-};
 
 module.exports = {
   getAllFlights,
   getFlightById,
-  addFlight,
 };
