@@ -4,6 +4,13 @@ const getAllPlanes = async (req, res) => {
   try {
     const [data] = await db.promise().query("SELECT * FROM PLANE");
 
+    if (data.length === 0) {
+      return res.status(404).json({
+        status: "failed to get all planes",
+        message: "No planes found",
+      });
+    }
+
     res.status(200).json({
       status: "success",
       results: data.length,
@@ -47,6 +54,14 @@ const getPlaneById = async (req, res) => {
 };
 
 const addPlane = async (req, res) => {
+  const { numberOfSeats } = req.body;
+  if (typeof numberOfSeats !== "number" || numberOfSeats <= 0) {
+    return res.status(400).json({
+      status: "failed to add plane",
+      message: "Invalid number of seats",
+    });
+  }
+
   try {
     const [data] = await db
       .promise()
