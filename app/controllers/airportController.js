@@ -4,13 +4,6 @@ const getAllAirports = async (req, res) => {
   try {
     const [data] = await db.promise().query("SELECT * FROM AIRPORT");
 
-    if (data.length === 0) {
-      return res.status(404).json({
-        status: "failed to get all airports",
-        message: "No airports found",
-      });
-    }
-
     res.status(200).json({
       status: "success",
       results: data.length,
@@ -54,14 +47,6 @@ const getAirportById = async (req, res) => {
 };
 
 const addAirport = async (req, res) => {
-  const { town_ID } = req.body;
-  if (typeof town_ID !== "number" || town_ID <= 0) {
-    return res.status(400).json({
-      status: "failed to add airport",
-      message: "Invalid town ID",
-    });
-  }
-
   try {
     const [data] = await db
       .promise()
