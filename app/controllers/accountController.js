@@ -6,34 +6,28 @@ const userSignUp = async (req, res) => {
   try {
     const { email, password, firstName, lastName } = req.body;
 
-    if (!email || !password || !firstName || !lastName) {
-      return res.status(400).json({ error: "All fields are required." });
-    }
-
     const [existingUser] = await db
       .promise()
       .query("SELECT * FROM account WHERE email = ?", [email]);
+
     if (existingUser.length > 0) {
-      return res
-        .status(409)
-        .json({ error: "User with that email already exists." });
+      return res.status(409).json({ success: false, error: "User already exists. Please log in." });
     }
 
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    const accountData = {
-      email,
-      firstName,
-      lastName,
-      passwordHash: hashedPassword,
-    };
+    const [result] = await db
+      .promise()
+      .query("INSERT INTO account (email, passwordHash, firstName, lastName) VALUES (?, ?, ?, ?)", [email, passwordHash, firstName, lastName]);
 
-    await db.promise().query("INSERT INTO account SET ?", accountData);
-
-    res.status(201).json({ message: "User successfully registered." });
+    if (result.affectedRows === 1) {
+      res.status(201).json({ success: true, message: "User registered successfully." });
+    } else {
+      res.status(500).json({ success: false, error: "Registration failed. Please try again." });
+    }
   } catch (error) {
-    res.status(500).json({ error: "Internal server error." });
+    res.status(500).json({ success: false, error: "Internal server error." });
   }
 };
 
@@ -44,32 +38,29 @@ const userLogin = async (req, res) => {
     const [results] = await db
       .promise()
       .query("SELECT * FROM account WHERE email = ?", [email]);
-    console.log("Database query results:", results);
 
     if (results.length === 0) {
-      return res.status(401).json({ error: "Invalid login credentials." });
+      return res.status(401).json({ success: false, error: "Account doesn't exist" });
     }
 
     const user = results[0];
 
-    console.log("User data from the database:", user);
-
     const passwordMatch = await bcrypt.compare(password, user.passwordHash);
-    console.log("Password match:", passwordMatch);
 
     if (!passwordMatch) {
-      return res.status(401).json({ error: "Invalid login credentials." });
+      return res.status(401).json({ success: false, error: "Invalid login credentials." });
     }
 
     const token = jwt.sign({ userId: user.email }, "secret_key", {
       expiresIn: "1h",
     });
 
-    res.status(200).json({ token });
+    res.status(200).json({ success: true, token });
   } catch (error) {
-    res.status(500).json({ error: "Internal server error." });
+    res.status(500).json({ success: false, error: "Internal server error." });
   }
 };
+
 
 const getAllAccounts = async (req, res) => {
   try {
@@ -130,12 +121,15 @@ const addAccount = async (req, res) => {
       },
     });
   } catch (err) {
-    return res.status(500).json({
+    console.error("Error adding account:", err); // Dodano ispisivanje pogreške u konzoli radi debagiranja
+
+    res.status(500).json({
       status: "failed to add account",
       message: err.message,
     });
   }
 };
+
 
 module.exports = {
   userSignUp,
