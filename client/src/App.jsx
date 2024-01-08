@@ -1,12 +1,12 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import SearchForm from "./components/SearchForm";
-import AuthButtons from "./components/AuthButtons";
 import CompanyLogo from "./components/CompanyLogo";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/Login";
-import RegistrationPage from "./pages/Registration";
+import LandingPageButtons from "./components/LandingPageButtons";
+import LoginForm from "./pages/Login";
+import RegistrationForm from "./pages/Registration";
 
 const App = () => {
   return (
@@ -16,9 +16,9 @@ const App = () => {
           path="/"
           element={
             <Container>
-              <Row className="mt-2">
-                <Col className="text-right">
-                  <AuthButtons />
+              <Row className="justify-content-md-start mt-4 ml-2">
+                <Col md={8}>
+                  <LandingPageButtons />
                 </Col>
               </Row>
               <Row className="mb-4">
@@ -34,8 +34,8 @@ const App = () => {
             </Container>
           }
         />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/registration" element={<RegistrationPage />} />
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/registration" element={<RegistrationForm />} />
       </Routes>
     </BrowserRouter>
   );
