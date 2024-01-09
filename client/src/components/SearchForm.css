@@ -1,0 +1,40 @@
+
+.town-dropdown {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #3498db; 
+  border-radius: 8px; 
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.town-dropdown li {
+  padding: 12px; 
+  cursor: pointer;
+  background-color: #ecf0f1; 
+  border-bottom: 1px solid #3498db; 
+  transition: background-color 0.3s ease; 
+}
+
+.town-dropdown li:hover {
+  background-color: #bdc3c7; 
+}
+
+
+body {
+  background-color: #f2f2f2;
+}
+
+
+.text-right {
+  color: #3498db; 
+}
+
+.mb-4 {
+  text-align: center; /
+}
+
+
+
+  

@@ -40,8 +40,7 @@ const useLogin = () => {
       if (response.data.success) {
         setIsLoggedIn(true);
         setErrorMessage('');
-        // Redirect to the landingpage kad bude napravljena
-        // navigate('/landingpage');
+        navigate('/');
       }
     } catch (error) {
       setErrorMessage('Account does not exist.');
