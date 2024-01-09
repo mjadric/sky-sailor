@@ -9,23 +9,23 @@ jest.mock("../../app/database", () => ({
 }));
 
 const mockData = [
-    {
-      flight_ID: 52,
-      departureTimeDate: "2024-12-23 12:02:00",
-      arrivalTimeDate: "2024-12-25 16:03:45",
-      timeZone: "CET",
-      plane_ID: 4,
-      departureAirport_ID: 6,
-      destinationAirport_ID: 7,
-      extraBaggagePrice: 2,
-      flightInsurancePrice: 5,
-      timezone_ID: 6,
-      arrivalTimeZone_ID: 6,
-      departureTimeZone_ID: 6,
-    },
-  ];
+  {
+    flight_ID: 52,
+    departureTimeDate: "2024-12-23 12:02:00",
+    arrivalTimeDate: "2024-12-25 16:03:45",
+    timeZone: "CET",
+    plane_ID: 4,
+    departureAirport_ID: 6,
+    destinationAirport_ID: 7,
+    extraBaggagePrice: 2,
+    flightInsurancePrice: 5,
+    timezone_ID: 6,
+    arrivalTimeZone_ID: 6,
+    departureTimeZone_ID: 6,
+  },
+];
 
-  describe("Admin flight controller test cases", () => {
+describe("Admin flight controller test cases", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -66,9 +66,9 @@ const mockData = [
       departureTimeZone_ID: 6,
     };
 
-    db.promise().query.mockRejectedValueOnce(
-      [new Error("Invalid insert flight")]
-    );
+    db.promise().query.mockRejectedValueOnce([
+      new Error("Invalid insert flight"),
+    ]);
 
     const response = await request(app).post("/api/flights").send(newFlight);
 
@@ -77,10 +77,5 @@ const mockData = [
       status: "failed",
       message: "Invalid insert flight",
     });
-
-    
   });
-  
-  });
-
-
+});
