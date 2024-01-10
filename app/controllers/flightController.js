@@ -46,7 +46,6 @@ const getFlightById = async (req, res) => {
   }
 };
 
-
 const searchFlights = async (req, res) => {
   const { departureTownId, destinationTownId, departureDate } = req.query;
 
