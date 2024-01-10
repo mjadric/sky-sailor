@@ -115,7 +115,7 @@ const getAllFlightClasses = async (req, res) => {
   try {
     const [data] = await db
       .promise()
-      .query("SELECT * FROM flight_travelclass WHERE flight_ID = ?", [
+      .query("CALL get_flight_classes(?)", [
         flightId,
       ]);
 
