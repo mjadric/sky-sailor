@@ -4,26 +4,23 @@ const addFlight = async (req, res) => {
   const {
     departureTimeDate,
     arrivalTimeDate,
-    timeZone,
     plane_ID,
     departureAirport_ID,
     destinationAirport_ID,
     extraBaggagePrice,
     flightInsurancePrice,
     timezone_ID,
-    arrivalTimeZone_ID,
-    departureTimeZone_ID,
   } = req.body;
+
   const today = new Date();
   const departureDate = new Date(departureTimeDate);
   const arrivalDate = new Date(arrivalTimeDate);
+
   if (
     departureDate < today ||
     arrivalDate < today ||
     typeof departureDate !== "object" ||
     typeof arrivalDate !== "object" ||
-    typeof timeZone !== "string" ||
-    timeZone <= 0 ||
     typeof plane_ID !== "number" ||
     plane_ID <= 0 ||
     typeof departureAirport_ID !== "number" ||
@@ -37,17 +34,14 @@ const addFlight = async (req, res) => {
     flightInsurancePrice < 0 ||
     flightInsurancePrice > 99.99 ||
     typeof timezone_ID !== "number" ||
-    timezone_ID <= 0 ||
-    typeof arrivalTimeZone_ID !== "number" ||
-    arrivalTimeZone_ID <= 0 ||
-    typeof departureTimeZone_ID !== "number" ||
-    departureTimeZone_ID <= 0
+    timezone_ID <= 0
   ) {
     return res.status(400).json({
       status: "failed",
       message: "Invalid insert flight",
     });
   }
+
   try {
     const [data] = await db
       .promise()
@@ -156,10 +150,19 @@ const updateFlight = async (req, res) => {
 };
 
 const deleteFlight = async (req, res) => {
+  const { id } = req.params.id;
+
+  if (typeof id !== "number" || id <= 0) {
+    return res.status(400).json({
+      status: "failed",
+      message: "Invalid flight ID",
+    });
+  }
+
   try {
     const [data] = await db
       .promise()
-      .query(`DELETE FROM FLIGHT WHERE flight_ID = ${req.params.id}`);
+      .query(`DELETE FROM FLIGHT WHERE flight_ID = ${id}`);
 
     if (data.affectedRows === 0) {
       return res.status(404).json({
@@ -167,6 +170,7 @@ const deleteFlight = async (req, res) => {
         message: "Flight not found.",
       });
     }
+
     res.status(200).json({
       status: "success",
       data: {
