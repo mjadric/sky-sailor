@@ -10,12 +10,11 @@ jest.mock("../../app/database", () => ({
 
 const mockData = [
   {
-    reservation_ID: 1,
-    flight_ID: 1,
-    seat_ID: 1,
-    account_ID: 1,
-    extraBaggage: true,
-    flightInsurance: true,
+    flightId: 1,
+    accountId: 1,
+    seatId: 1,
+    extraBaggage: 0,
+    flightInsurance: 0,
   },
 ];
 
@@ -131,6 +130,12 @@ describe("Reservation controller", () => {
   });
 
   it("POST /reservations", async () => {
+    const flightId = 1;
+    const accountId = 1;
+    const seatId = 1;
+    const extraBaggage = 0;
+    const flightInsurance = 0;
+
     const mockReservation = mockData[0];
 
     db.query.mockResolvedValueOnce([mockReservation]);
@@ -148,14 +153,14 @@ describe("Reservation controller", () => {
     });
 
     expect(db.query).toHaveBeenCalledWith(
-      `INSERT INTO RESERVATION SET ?`,
-      mockReservation
+      `CALL add_reservation (?, ?, ?, ?, ?)`,
+      [flightId, accountId, seatId, extraBaggage, flightInsurance]
     );
   });
 
   it("POST /reservations - invalid reservation", async () => {
     const mockReservation = {
-      flight_ID: "invalid",
+      flightId: "invalid",
     };
 
     const res = await request(app)
@@ -172,6 +177,12 @@ describe("Reservation controller", () => {
   });
 
   it("POST /reservations - error during insertion", async () => {
+    const flightId = 1;
+    const accountId = 1;
+    const seatId = 1;
+    const extraBaggage = 0;
+    const flightInsurance = 0;
+
     const mockReservation = mockData[0];
 
     db.query.mockRejectedValueOnce(new Error("database error"));
@@ -187,8 +198,8 @@ describe("Reservation controller", () => {
     });
 
     expect(db.query).toHaveBeenCalledWith(
-      `INSERT INTO RESERVATION SET ?`,
-      mockReservation
+      `CALL add_reservation (?, ?, ?, ?, ?)`,
+      [flightId, accountId, seatId, extraBaggage, flightInsurance]
     );
   });
 });
