@@ -33,6 +33,8 @@ router.get("/flights/:id", flightController.getFlightById);
 router.get("/reservations", reservationController.getAllReservations);
 router.get("/reservations/:id", reservationController.getReservationById);
 router.post("/reservations", reservationController.addReservation);
+router.get("/flightclasses", reservationController.getAllFlightClasses);
+router.get("/seat", reservationController.getFirstAvailableSeat);
 
 router.get("/towns", townController.getTownsByName);
 
