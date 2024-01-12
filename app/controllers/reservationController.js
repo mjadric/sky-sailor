@@ -103,9 +103,9 @@ const addReservation = async (req, res) => {
 };
 
 const getAllFlightClasses = async (req, res) => {
-  const { flightId } = req.body;
+  const { flightId } = req.query;
 
-  if (!flightId || typeof flightId !== "number" || flightId <= 0) {
+  if (!flightId || typeof +flightId !== "number" || +flightId <= 0) {
     return res.status(400).json({
       status: "failed to get flight classes",
       message: "Invalid flight ID",
@@ -115,9 +115,7 @@ const getAllFlightClasses = async (req, res) => {
   try {
     const [data] = await db
       .promise()
-      .query("CALL get_flight_classes(?)", [
-        flightId,
-      ]);
+      .query("CALL get_flight_classes(?)", [flightId]);
 
     if (data.length === 0) {
       return res.status(404).json({
@@ -142,12 +140,24 @@ const getAllFlightClasses = async (req, res) => {
 };
 
 const getFirstAvailableSeat = async (req, res) => {
-  const { flightId, classId } = req.body;
+  const { flightId, classId } = req.query;
 
   try {
+
     const [data] = await db
       .promise()
-      .query(`CALL get_first_available_seat(?, ?)`[(flightId, classId)]);
+      .query("CALL get_seat_for_reservation(?, ?, @selectedSeatId)", [flightId, classId]);
+
+    const [selectedSeat] = await db
+      .promise()
+      .query("SELECT @selectedSeatId AS selectedSeatId");
+
+    const seatId = selectedSeat[0].selectedSeatId;
+
+    res.status(200).json({
+      status: "success",
+      seatId
+    });
   } catch (err) {
     return res.status(500).json({
       status: "failed to get first available seat for selected class",
