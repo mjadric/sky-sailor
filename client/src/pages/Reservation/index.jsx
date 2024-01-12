@@ -20,8 +20,9 @@ const ReservationPage = () => {
   const [totalPrice, setTotalPrice] = useState(flight.adultSeatPrice);
 
   return (
-    <Container className="mx-auto" style={{ maxWidth: "60%" }}>
+    <Container style={{ maxWidth: "60%", marginTop: "6rem" }}>
       <Row className="justify-content-md-center mt-4 pt-4 border p-4">
+        <h1>Rezervacija</h1>
         <Col md={6} className="p-8">
           <ReservationForm
             flight={flight}
@@ -46,7 +47,11 @@ const ReservationPage = () => {
               {flight.destinationCountry}
             </ListGroup.Item>
           </ListGroup>
-          <Badge pill bg="info" className="mt-3">
+          <Badge
+            pill
+            bg="info"
+            className="mt-3"
+            style={{ fontSize: "1.4em", padding: "12px" }}>
             Total Price: {totalPrice}€
           </Badge>
         </Col>

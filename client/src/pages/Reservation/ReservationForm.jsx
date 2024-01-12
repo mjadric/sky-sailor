@@ -2,8 +2,11 @@ import { useState, useEffect } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 
 const ReservationForm = ({ flight, accountId, setTotalPrice }) => {
+  const navigate = useNavigate();
+
   const [travelClasses, setTravelClasses] = useState(null);
   const [selectedClass, setSelectedClass] = useState({});
   const [ticketType, setTicketType] = useState(""); // ["child", "adult"]
@@ -141,6 +144,10 @@ const ReservationForm = ({ flight, accountId, setTotalPrice }) => {
     console.log(formData);
   };
 
+  const handleCancel = () => {
+    navigate("/search-results");
+  };
+
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Group controlId="ReservationForm.TravelClass" className="mb-3">
@@ -204,6 +211,9 @@ const ReservationForm = ({ flight, accountId, setTotalPrice }) => {
         <Col xs="auto" className="mt-3">
           <Button variant="success" type="submit">
             Rezerviraj
+          </Button>
+          <Button variant="danger" className="ms-2" onClick={handleCancel}>
+            Odustani
           </Button>
         </Col>
       </Row>
