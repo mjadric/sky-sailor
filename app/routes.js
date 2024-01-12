@@ -24,7 +24,7 @@ router.post("/planes", planeController.addPlane);
 router.get("/accounts", accountController.getAllAccounts);
 router.get("/accounts/:id", accountController.getAccountById);
 router.post("/accounts", accountController.addAccount);
-router.post("/login", accountController.userLogin);
+router.post("/login", accountController.login);
 router.post("/signup", accountController.userSignUp);
 
 router.get("/flights", flightController.getAllFlights);
