@@ -1,142 +1,151 @@
-import React, { useState, useEffect } from "react";
-import { Form, Button, Row, Col } from "react-bootstrap";
-import axios from "axios";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./SearchForm.css";
 
 const SearchForm = () => {
-  const [departureCity, setDepartureCity] = useState("");
-  const [destinationCity, setDestinationCity] = useState("");
+  const [departureTown, setDepartureTown] = useState("");
+  const [destinationTown, setDestinationTown] = useState("");
   const [departureDate, setDepartureDate] = useState("");
-  const [departureTowns, setDepartureTowns] = useState([]);
-  const [destinationTowns, setDestinationTowns] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [departureTime, setDepartureTime] = useState("");
+  const [arrivalTime, setArrivalTime] = useState("");
+  const [townSearchResults, setTownSearchResults] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [activeInput, setActiveInput] = useState(null);
+  const navigate = useNavigate();
 
-  const handleDepartureCityChange = async (event) => {
-    const inputCity = event.target.value;
-    setDepartureCity(inputCity);
+  const debounce = (func, delay) => {
+    let inDebounce;
+    return function () {
+      const context = this;
+      const args = arguments;
+      clearTimeout(inDebounce);
+      inDebounce = setTimeout(() => func.apply(context, args), delay);
+    };
+  };
 
-    setLoading(true);
+  const searchTowns = async (townName) => {
+    const response = await fetch(
+      `http://localhost:8800/api/towns?query=${townName}`
+    );
+    const data = await response.json();
+    if (data.status === "success") {
+      setTownSearchResults(data.data.towns);
+      setShowDropdown(true);
+    }
+  };
+
+  const debouncedSearchTowns = debounce(searchTowns, 300);
+
+  const handleTownInputChange = (e, setTown, inputType) => {
+    setTown(e.target.value);
+    debouncedSearchTowns(e.target.value);
+    setActiveInput(inputType);
+  };
+
+  const handleInputFocus = (inputType) => {
+    setActiveInput(inputType);
+  };
+
+  const selectTown = (townName, setTown) => {
+    setTown(townName);
+    setShowDropdown(false);
+    setActiveInput(null);
+  };
+
+  const getTownIdByName = async (townName) => {
     try {
-      const response = await axios.get(
-        `http://localhost:8800/api/towns?query=${inputCity}`
+      const response = await fetch(
+        `http://localhost:8800/api/towns?query=${townName}`
       );
-
-      if (response.data && response.data.data && response.data.data.towns) {
-        setDepartureTowns(response.data.data.towns);
+      const data = await response.json();
+      if (data.status === "success" && data.results > 0) {
+        return data.data.towns[0].town_ID;
       } else {
-        setDepartureTowns([]);
+        return null;
       }
     } catch (error) {
-      console.error("Failed to fetch departure towns:", error);
-    } finally {
-      setLoading(false);
+      console.error("Error fetching town ID:", error);
+      return null;
     }
   };
 
-  const handleDestinationCityChange = async (event) => {
-    const inputCity = event.target.value;
-    setDestinationCity(inputCity);
-
-    setLoading(true);
-    try {
-      const response = await axios.get(
-        `http://localhost:8800/api/towns?query=${inputCity}`
-      );
-
-      if (response.data && response.data.data && response.data.data.towns) {
-        setDestinationTowns(response.data.data.towns);
-      } else {
-        setDestinationTowns([]);
-      }
-    } catch (error) {
-      console.error("Failed to fetch destination towns:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleTownSelection = (selectedTown, isDeparture) => {
-    if (isDeparture) {
-      setDepartureCity(selectedTown.name);
-      setDepartureTowns([]);
-    } else {
-      setDestinationCity(selectedTown.name);
-      setDestinationTowns([]);
-    }
-  };
-
-  const handleDepartureDateChange = (event) => {
-    setDepartureDate(event.target.value);
-  };
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    const departureTownId = await getTownIdByName(departureTown);
+    const destinationTownId = await getTownIdByName(destinationTown);
+
+    if (departureTownId && destinationTownId) {
+      const response = await fetch(
+        `http://localhost:8800/api/search?departureTownId=${departureTownId}&destinationTownId=${destinationTownId}&departureDate=${departureDate}&departureTime=${departureTime}&arrivalTime=${arrivalTime}`
+      );
+      const data = await response.json();
+      if (data.status === "success") {
+        navigate("/results-container", {
+          state: { flights: data.data.flights },
+        });
+      } else {
+        console.error("Search failed", data);
+      }
+    } else {
+      console.error("One of the towns could not be found by name.");
+    }
   };
 
   return (
-    <Form className="mt-4 border p-4" onSubmit={handleSubmit}>
-      <Form.Group controlId="formDepartureCity">
-        <Form.Label>Mjesto polijetanja</Form.Label>
-        <Form.Control
+    <div>
+      <form onSubmit={handleSubmit}>
+        <input
           type="text"
-          placeholder="Unesite mjesto polijetanja"
-          value={departureCity}
-          onChange={handleDepartureCityChange}
+          placeholder="Mjesto polijetanja"
+          value={departureTown}
+          onChange={(e) =>
+            handleTownInputChange(e, setDepartureTown, "departure")
+          }
+          onFocus={() => handleInputFocus("departure")}
         />
-        {loading && <p>Loading...</p>}
-        {!loading && departureTowns && departureTowns.length > 0 && (
-          <ul className="town-dropdown">
-            {departureTowns.map((town) => (
-              <li
+        {showDropdown && activeInput === "departure" && (
+          <div className="dropdown">
+            {townSearchResults.map((town) => (
+              <div
                 key={town.town_ID}
-                onClick={() => handleTownSelection(town, true)}
+                onClick={() => selectTown(town.name, setDepartureTown)}
               >
                 {town.name}
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
-      </Form.Group>
-
-      <Form.Group controlId="formDestinationCity">
-        <Form.Label>Mjesto slijetanja</Form.Label>
-        <Form.Control
+        <input
           type="text"
-          placeholder="Unesite mjesto slijetanja"
-          value={destinationCity}
-          onChange={handleDestinationCityChange}
+          placeholder="Mjesto slijetanja"
+          value={destinationTown}
+          onChange={(e) =>
+            handleTownInputChange(e, setDestinationTown, "destination")
+          }
+          onFocus={() => handleInputFocus("destination")}
         />
-        {!loading && destinationTowns && destinationTowns.length > 0 && (
-          <ul className="town-dropdown">
-            {destinationTowns.map((town) => (
-              <li
+        {showDropdown && activeInput === "destination" && (
+          <div className="dropdown">
+            {townSearchResults.map((town) => (
+              <div
                 key={town.town_ID}
-                onClick={() => handleTownSelection(town, false)}
+                onClick={() => selectTown(town.name, setDestinationTown)}
               >
                 {town.name}
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
-      </Form.Group>
-
-      <Form.Group controlId="formDepartureDate">
-        <Form.Label>Datum polijetanja</Form.Label>
-        <Form.Control
+        <input
           type="date"
+          placeholder="Datum polijetanja"
           value={departureDate}
-          onChange={handleDepartureDateChange}
+          onChange={(e) => setDepartureDate(e.target.value)}
         />
-      </Form.Group>
 
-      <Row className="justify-content-center">
-        <Col xs="auto" className="mt-3">
-          <Button variant="primary" type="submit">
-            Pretraži letove
-          </Button>
-        </Col>
-      </Row>
-    </Form>
+        <button type="submit">Pretraži letove</button>
+      </form>
+    </div>
   );
 };
 
