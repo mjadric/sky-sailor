@@ -38,21 +38,30 @@ const useRegistration = () => {
 
     try {
       const response = await axios.post('http://localhost:8800/api/signup', formData);
-
+    
       if (response.data.success) {
         setIsRegistered(true);
         setErrorMessage('');
         redirectToLogin();
       }
     } catch (error) {
-      if (error.response && error.response.status === 409) {
-        setIsRegistered(false);
-        setErrorMessage('User already exists. Please log in.');
+      if (error.response) {
+        if (error.response.status === 400) {
+            setIsRegistered(false);
+            setErrorMessage('Invalid email address.');
+        } else if (error.response.status === 409) {
+          setIsRegistered(false);
+          setErrorMessage('User already exists. Please log in.');
+        } else {
+          setIsRegistered(false);
+          setErrorMessage('Internal server error.');
+        }
       } else {
         setIsRegistered(false);
-        setErrorMessage('Internal server error.');
+        setErrorMessage('Network error. Please try again.');
       }
     }
+    
   };
 
   return {

@@ -6,12 +6,28 @@ const userSignUp = async (req, res) => {
   try {
     const { email, password, firstName, lastName } = req.body;
 
-    const [existingUser] = await db
-      .promise()
-      .query("SELECT * FROM account WHERE email = ?", [email]);
+    const isInvalidDomain = email.endsWith('@sky-sailor.com');
+    if (isInvalidDomain) {
+      return res.status(400).json({ success: false, error: "Invalid email address." });
+    }
 
-    if (existingUser.length > 0) {
-      return res.status(409).json({ success: false, error: "User already exists. Please log in." });
+    const isEmailAlreadyRegistered = async (email) => {
+      try {
+        const [result] = await db
+          .promise()
+          .query("SELECT * FROM account WHERE email = ?", [email]);
+    
+        return result.length > 0;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    };
+    
+    const isEmailTaken = await isEmailAlreadyRegistered(email);
+
+    if (isEmailTaken) {
+      return res.status(409).json({ success: false, error: "Email is already registered. Please log in." });
     }
 
     const saltRounds = 10;
@@ -27,23 +43,39 @@ const userSignUp = async (req, res) => {
       res.status(500).json({ success: false, error: "Registration failed. Please try again." });
     }
   } catch (error) {
-    res.status(500).json({ success: false, error: "Internal server error." });
+    res.status(500).json({ success: false });
   }
 };
 
-const userLogin = async (req, res) => {
+const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const [results] = await db
+    const [adminResults] = await db
       .promise()
-      .query("SELECT * FROM account WHERE email = ?", [email]);
+      .query("SELECT * FROM adminaccount WHERE email = ?", [email]);
 
-    if (results.length === 0) {
-      return res.status(401).json({ success: false, error: "Account doesn't exist" });
+    let user;
+
+    if (adminResults.length > 0) {
+      const admin = adminResults[0];
+
+      if (admin.active) {
+        return res.status(401).json({ success: false, error: "Account is inactive" });
+      }
+
+      user = admin;
+    } else {
+      const [userResults] = await db
+        .promise()
+        .query("SELECT * FROM account WHERE email = ?", [email]);
+
+      if (userResults.length > 0) {
+        user = userResults[0];
+      } else {
+        return res.status(401).json({ success: false, error: "Account doesn't exist" });
+      }
     }
-
-    const user = results[0];
 
     const passwordMatch = await bcrypt.compare(password, user.passwordHash);
 
@@ -51,7 +83,9 @@ const userLogin = async (req, res) => {
       return res.status(401).json({ success: false, error: "Invalid login credentials." });
     }
 
-    const token = jwt.sign({ userId: user.email }, "secret_key", {
+    const role = adminResults.length > 0 ? 'admin' : 'user';
+
+    const token = jwt.sign({ userId: user.email, role }, "shared_secret_key", {
       expiresIn: "1h",
     });
 
@@ -121,7 +155,7 @@ const addAccount = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("Error adding account:", err); // Dodano ispisivanje pogreške u konzoli radi debagiranja
+    console.error("Error adding account:", err); 
 
     res.status(500).json({
       status: "failed to add account",
@@ -133,7 +167,7 @@ const addAccount = async (req, res) => {
 
 module.exports = {
   userSignUp,
-  userLogin,
+  login,
   getAllAccounts,
   getAccountById,
   addAccount,
