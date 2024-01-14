@@ -95,6 +95,35 @@ const login = async (req, res) => {
   }
 };
 
+const lastResetTimes = new Map(); 
+const resetPassword = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    const lastResetTime = lastResetTimes.get(email);
+
+    if (lastResetTime && Date.now() - lastResetTime < 24 * 60 * 60 * 1000) {
+      return res.status(400).json({ success: false, error: 'You can only reset your password once in a day.' });
+    }
+
+    const [userResults] = await db.promise().query('SELECT * FROM account WHERE email = ?', [email]);
+
+    if (userResults.length === 0) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+
+    const newPasswordHash = await bcrypt.hash(newPassword, 10);
+
+    await db.promise().query('UPDATE account SET passwordHash = ? WHERE email = ?', [newPasswordHash, email]);
+
+    lastResetTimes.set(email, Date.now());
+
+    res.status(200).json({ success: true, message: 'Password reset successful' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+};
+
 
 const getAllAccounts = async (req, res) => {
   try {
@@ -171,4 +200,5 @@ module.exports = {
   getAllAccounts,
   getAccountById,
   addAccount,
+  resetPassword
 };
