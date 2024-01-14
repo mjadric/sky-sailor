@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./SearchForm.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 
 const SearchForm = () => {
   const [departureTown, setDepartureTown] = useState("");
   const [destinationTown, setDestinationTown] = useState("");
   const [departureDate, setDepartureDate] = useState("");
-  const [departureTime, setDepartureTime] = useState("");
-  const [arrivalTime, setArrivalTime] = useState("");
   const [townSearchResults, setTownSearchResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeInput, setActiveInput] = useState(null);
@@ -98,9 +96,83 @@ const SearchForm = () => {
   };
 
   return (
-    <div>
+    <div className="container mt-3">
       <form onSubmit={handleSubmit}>
-        <input
+        <div className="mb-3">
+          <label htmlFor="departureTown" className="form-label">
+            Mjesto polijetanja:
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="departureTown"
+            placeholder="Mjesto polijetanja"
+            value={departureTown}
+            onChange={(e) =>
+              handleTownInputChange(e, setDepartureTown, "departure")
+            }
+            onFocus={() => handleInputFocus("departure")}
+            required
+          />
+          {showDropdown && activeInput === "departure" && (
+            <div className="dropdown-menu show">
+              {townSearchResults.map((town) => (
+                <a
+                  className="dropdown-item"
+                  key={town.town_ID}
+                  onClick={() => selectTown(town.name, setDepartureTown)}>
+                  {town.name}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="destinationTown" className="form-label">
+            Mjesto slijetanja:
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="destinationTown"
+            placeholder="Mjesto slijetanja"
+            value={destinationTown}
+            onChange={(e) =>
+              handleTownInputChange(e, setDestinationTown, "destination")
+            }
+            onFocus={() => handleInputFocus("destination")}
+            required
+          />
+          {showDropdown && activeInput === "destination" && (
+            <div className="dropdown-menu show">
+              {townSearchResults.map((town) => (
+                <a
+                  className="dropdown-item"
+                  key={town.town_ID}
+                  onClick={() => selectTown(town.name, setDestinationTown)}>
+                  {town.name}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="departureDate" className="form-label">
+            Datum polijetanja:
+          </label>
+          <input
+            type="date"
+            className="form-control"
+            id="departureDate"
+            placeholder="Datum polijetanja"
+            value={departureDate}
+            onChange={(e) => setDepartureDate(e.target.value)}
+            required
+          />
+        </div>
+        {/* <input
           type="text"
           placeholder="Mjesto polijetanja"
           value={departureTown}
@@ -145,9 +217,11 @@ const SearchForm = () => {
           placeholder="Datum polijetanja"
           value={departureDate}
           onChange={(e) => setDepartureDate(e.target.value)}
-        />
+        /> */}
 
-        <button type="submit">Pretraži letove</button>
+        <button type="submit" className="btn btn-primary">
+          Pretraži letove
+        </button>
       </form>
     </div>
   );
