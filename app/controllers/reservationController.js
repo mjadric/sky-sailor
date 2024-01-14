@@ -88,7 +88,7 @@ const addReservation = async (req, res) => {
         flightInsurance,
       ]);
 
-    res.status(200).json({
+    res.status(201).json({
       status: "success",
       data: {
         reservation: data,

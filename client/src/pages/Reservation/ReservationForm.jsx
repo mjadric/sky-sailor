@@ -164,7 +164,7 @@ const ReservationForm = ({ flight, setTotalPrice }) => {
     setTotalPrice,
   ]);
 
-  const handleInputChange = (event) => {
+  const handleInputChange =  (event) => {
     const { name, type, checked } = event.target;
 
     if (type === "checkbox") {
@@ -185,14 +185,39 @@ const ReservationForm = ({ flight, setTotalPrice }) => {
     setTicketType(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    
+    if (formData.accountId < 1) {
+      navigate(-1);
+      return;
+    }
+
+    if (formData.seatId < 1) {
+      setNoSeatsWarning("Nema slobodnih sjedala za odabranu klasu.");
+      return;
+    }
+
+    if (selectedClass.name === undefined || ticketType === "") {
+      setPriceWarning(
+        "Klasa i vrsta karte su obavezna polja."
+      );
+      return;
+    }
 
     if (!window.confirm("Jeste li sigurni da želite rezervirati kartu?")) {
       return;
     }
 
-    console.log(formData);
+    const response = await axios.post("http://localhost:8800/api/reservations", formData);
+    
+    console.log(response);
+    if (response.status === 201) {
+      window.alert("Uspješno ste rezervirali kartu!");
+      navigate("/");
+    } else {
+      window.alert("Rezervacija nije uspjela.");
+    }
   };
 
   const handleCancel = () => {
