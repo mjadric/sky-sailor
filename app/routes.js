@@ -1,4 +1,6 @@
 const express = require("express");
+const jwt = require("jsonwebtoken");
+
 
 const homeController = require("./controllers/homeController");
 const flightController = require("./controllers/flightController");
@@ -26,7 +28,6 @@ router.get("/accounts/:id", accountController.getAccountById);
 router.post("/accounts", accountController.addAccount);
 router.post("/login", accountController.login);
 router.post("/signup", accountController.userSignUp);
-router.post('/reset-password', accountController.resetPassword);
 
 router.get("/flights", flightController.getAllFlights);
 router.get("/flights/:id", flightController.getFlightById);
@@ -44,5 +45,29 @@ router.get("/search", flightController.searchFlights);
 router.post("/flights", adminFlightController.addFlight);
 router.patch("/flights/:id", adminFlightController.updateFlight);
 router.delete("/flights/:id", adminFlightController.deleteFlight);
+
+const authenticateToken = async (req, res, next) => {
+    const tokenHeader = req.headers['authorization'];
+  
+    if (!tokenHeader) {
+      return res.status(401).json({ success: false, error: 'Unauthorized: No token provided' });
+    }
+
+    const token = tokenHeader.split(' ')[1];
+  
+    console.log('Received Token:', token);
+  
+    try {
+      const user = await jwt.verify(token, 'shared_secret_key');
+      req.user = user;
+      next();
+    } catch (err) {
+      console.error('JWT Verification Error:', err);
+      return res.status(403).json({ success: false, error: 'Forbidden: Invalid token' });
+    }
+  };
+
+  
+  router.get("/account", authenticateToken, accountController.getAccount);
 
 module.exports = router;

@@ -193,6 +193,46 @@ const addAccount = async (req, res) => {
   }
 };
 
+const getAccount = async (req, res) => {
+  const user = req.user;
+
+  if (!user) {
+    return res.status(401).json({ success: false, error: 'Unauthorized: No user data available' });
+  }
+
+  try {
+    console.log('User ID from token:', user.userId);
+
+    const [data] = await db.promise().query(`
+      SELECT firstName, lastName, email, phoneNumber
+      FROM account
+      WHERE email = ?
+    `, [user.userId]);
+
+    console.log('Fetched data:', data);
+
+    if (data.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'User data not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        account: data[0],
+      },
+    });
+  } catch (err) {
+    console.error('Error fetching user data:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+    });
+  }
+};
+
 
 module.exports = {
   userSignUp,
@@ -200,5 +240,6 @@ module.exports = {
   getAllAccounts,
   getAccountById,
   addAccount,
-  resetPassword
+  resetPassword,
+  getAccount
 };
