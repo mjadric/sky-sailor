@@ -1,4 +1,3 @@
-import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import SearchForm from "./components/SearchForm";
 import CompanyLogo from "./components/CompanyLogo";
@@ -8,6 +7,7 @@ import LandingPageButtons from "./components/LandingPageButtons";
 import LoginForm from "./pages/Login";
 import RegistrationForm from "./pages/Registration";
 import ResetPasswordForm from "./pages/ResetPassword";
+import ResultsPage from "./pages/Results/ResultsPage";
 
 const App = () => {
   return (
@@ -38,6 +38,7 @@ const App = () => {
         <Route path="/login" element={<LoginForm />} />
         <Route path="/registration" element={<RegistrationForm />} />
         <Route path="/reset-password" element={<ResetPasswordForm />} />
+        <Route path="/search-results" element={<ResultsPage />} />
       </Routes>
     </BrowserRouter>
   );
