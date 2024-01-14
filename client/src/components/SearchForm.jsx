@@ -96,7 +96,7 @@ const SearchForm = () => {
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="departureTown" className="form-label">
-            Mjesto polijetanja
+            Mjesto polijetanja:
           </label>
           <input
             type="text"
@@ -108,6 +108,7 @@ const SearchForm = () => {
               handleTownInputChange(e, setDepartureTown, "departure")
             }
             onFocus={() => handleInputFocus("departure")}
+            required
           />
           {showDropdown && activeInput === "departure" && (
             <div className="dropdown-menu show">
@@ -126,7 +127,7 @@ const SearchForm = () => {
 
         <div className="mb-3">
           <label htmlFor="destinationTown" className="form-label">
-            Mjesto slijetanja
+            Mjesto slijetanja:
           </label>
           <input
             type="text"
@@ -138,6 +139,7 @@ const SearchForm = () => {
               handleTownInputChange(e, setDestinationTown, "destination")
             }
             onFocus={() => handleInputFocus("destination")}
+            required
           />
           {showDropdown && activeInput === "destination" && (
             <div className="dropdown-menu show">
@@ -156,7 +158,7 @@ const SearchForm = () => {
 
         <div className="mb-3">
           <label htmlFor="departureDate" className="form-label">
-            Datum polijetanja
+            Datum polijetanja:
           </label>
           <input
             type="date"
@@ -165,6 +167,7 @@ const SearchForm = () => {
             placeholder="Datum polijetanja"
             value={departureDate}
             onChange={(e) => setDepartureDate(e.target.value)}
+            required
           />
         </div>
 
