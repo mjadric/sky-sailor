@@ -4,26 +4,66 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 
-const ReservationForm = ({ flight, accountId, setTotalPrice }) => {
+const ReservationForm = ({ flight, setTotalPrice }) => {
   const navigate = useNavigate();
 
   const [travelClasses, setTravelClasses] = useState(null);
   const [selectedClass, setSelectedClass] = useState({});
   const [ticketType, setTicketType] = useState(""); // ["child", "adult"]
   const [noSeatsWarning, setNoSeatsWarning] = useState("");
+  const [priceWarning, setPriceWarning] = useState("");
 
   const [formData, setFormData] = useState({
-    flightId: flight.flightId,
-    accountId: accountId,
+    flightId: flight.flight_ID,
+    accountId: 0,
     seatId: 0,
     extraBaggage: 0,
     flightInsurance: 0,
   });
 
+  useEffect(() => {
+    const fetchAccount = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          console.log("Failed to fetch account: No token");
+          navigate("/login");
+          return;
+        }
+
+        const response = await axios.get("http://localhost:8800/api/acc", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 401) {
+          console.log("Failed to fetch account:", response);
+          navigate("/login");
+          console.log(response);
+          return;
+        }
+
+        if (response.data && response.data.data.account) {
+          setFormData((prevData) => ({
+            ...prevData,
+            accountId: response.data.data.account[0].account_ID,
+          }));
+        }
+      } catch (err) {
+        console.log("Failed to fetch account:", err);
+        navigate("/login");
+      }
+    };
+
+    fetchAccount();
+  }, []);
+
   // classes load on page load with flightId
   useEffect(() => {
     const fetchTravelClasses = async () => {
-      const flightId = flight.flightId;
+      const flightId = flight.flight_ID;
       try {
         const response = await axios.get(
           "http://localhost:8800/api/flightclasses",
@@ -56,7 +96,7 @@ const ReservationForm = ({ flight, accountId, setTotalPrice }) => {
       try {
         const response = await axios.get("http://localhost:8800/api/seat", {
           params: {
-            flightId: flight.flightId,
+            flightId: flight.flight_ID,
             classId: selectedClass.travelClass_ID,
           },
         });
@@ -80,19 +120,26 @@ const ReservationForm = ({ flight, accountId, setTotalPrice }) => {
       }
     };
 
+    setNoSeatsWarning("");
     fetchFirstAvailableSeat();
-  }, [selectedClass, flight.flightId]);
+  }, [selectedClass, flight.flight_ID]);
 
   useEffect(() => {
     const updateTotalPrice = () => {
       let price = Number(flight.adultSeatPrice);
 
-      if (selectedClass) {
-        if (ticketType === "child") {
-          price = Number(selectedClass.childSeatPrice);
-        } else if (ticketType === "adult") {
-          price = Number(selectedClass.adultSeatPrice);
-        }
+      setPriceWarning("");
+      if (selectedClass.name === undefined || ticketType === "") {
+        setPriceWarning(
+          "Odaberite i klasu i vrstu karte da biste vidjeli stvarnu cijenu."
+        );
+        return;
+      }
+
+      if (ticketType === "child") {
+        price = Number(selectedClass.childSeatPrice);
+      } else if (ticketType === "adult") {
+        price = Number(selectedClass.adultSeatPrice);
       }
 
       if (formData.extraBaggage === 1) {
@@ -141,11 +188,17 @@ const ReservationForm = ({ flight, accountId, setTotalPrice }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    if (!window.confirm("Jeste li sigurni da želite rezervirati kartu?")) {
+      return;
+    }
+
     console.log(formData);
   };
 
   const handleCancel = () => {
-    navigate("/search-results");
+    if (window.confirm("Jeste li sigurni da želite odustati od rezervacije?")) {
+      navigate(-1);
+    }
   };
 
   return (
@@ -187,6 +240,7 @@ const ReservationForm = ({ flight, accountId, setTotalPrice }) => {
             <option value="adult">Odrasla karta</option>
           </Form.Control>
         )}
+        <label className="text-danger font-weight-bold">{priceWarning}</label>
       </Form.Group>
       <Form.Group controlId="ReservationForm.ExtraBaggage" className="mb-3">
         <Form.Check
@@ -223,7 +277,6 @@ const ReservationForm = ({ flight, accountId, setTotalPrice }) => {
 
 ReservationForm.propTypes = {
   flight: PropTypes.object.isRequired,
-  accountId: PropTypes.number.isRequired,
   setTotalPrice: PropTypes.func.isRequired,
 };
 

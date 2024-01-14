@@ -11,7 +11,7 @@ const ResultsPage = () => {
   };
 
   const handleBackClick = () => {
-    navigate("/");
+    navigate(-1);
   };
 
   return (
@@ -25,7 +25,7 @@ const ResultsPage = () => {
             <Card.Body>
               <Row>
                 <Col
-                  md={7}
+                  md={6}
                   className="d-flex flex-column justify-content-center">
                   <Card.Title>
                     {flight.departureTownName} ({flight.departureCountry}) -{" "}
@@ -33,12 +33,18 @@ const ResultsPage = () => {
                   </Card.Title>
                   <Card.Text className="departure-arrival-time">
                     {new Date(flight.departureTime).toLocaleTimeString([], {
+                      year: "numeric",
+                      month: "numeric",
+                      day: "numeric",
                       hour: "2-digit",
                       minute: "2-digit",
                       hour12: false,
                     })}{" "}
                     -{" "}
                     {new Date(flight.arrivalTime).toLocaleTimeString([], {
+                      year: "numeric",
+                      month: "numeric",
+                      day: "numeric",
                       hour: "2-digit",
                       minute: "2-digit",
                       hour12: false,
@@ -46,12 +52,22 @@ const ResultsPage = () => {
                   </Card.Text>
                 </Col>
                 <Col
-                  md={3}
+                  md={2}
                   className="d-flex flex-column justify-content-center">
                   <Card.Text>
                     Osnovna cijena:{" "}
                     <Badge pill bg="danger">
                       {flight.adultSeatPrice}€
+                    </Badge>
+                  </Card.Text>
+                </Col>
+                <Col
+                  md={2}
+                  className="d-flex flex-column justify-content-center">
+                  <Card.Text>
+                    Slobodnih mjesta:{" "}
+                    <Badge pill bg="success">
+                      {flight.totalAvailableSeats}
                     </Badge>
                   </Card.Text>
                 </Col>

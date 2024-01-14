@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SearchForm.css";
+import axios from "axios";
 
 const SearchForm = () => {
   const [departureTown, setDepartureTown] = useState("");
@@ -75,10 +76,15 @@ const SearchForm = () => {
     const destinationTownId = await getTownIdByName(destinationTown);
 
     if (departureTownId && destinationTownId) {
-      const response = await fetch(
-        `http://localhost:8800/api/search?departureTownId=${departureTownId}&destinationTownId=${destinationTownId}&departureDate=${departureDate}&departureTime=${departureTime}&arrivalTime=${arrivalTime}`
-      );
-      const data = await response.json();
+      const response = await axios.get(`http://localhost:8800/api/search`, {
+        params: {
+          departureTownId: departureTownId,
+          destinationTownId: destinationTownId,
+          departureDate: departureDate,
+        },
+      });
+
+      const data = response.data;
       if (data.status === "success") {
         navigate("/search-results", {
           state: { flights: data.data.flights },
@@ -108,8 +114,7 @@ const SearchForm = () => {
             {townSearchResults.map((town) => (
               <div
                 key={town.town_ID}
-                onClick={() => selectTown(town.name, setDepartureTown)}
-              >
+                onClick={() => selectTown(town.name, setDepartureTown)}>
                 {town.name}
               </div>
             ))}
@@ -129,8 +134,7 @@ const SearchForm = () => {
             {townSearchResults.map((town) => (
               <div
                 key={town.town_ID}
-                onClick={() => selectTown(town.name, setDestinationTown)}
-              >
+                onClick={() => selectTown(town.name, setDestinationTown)}>
                 {town.name}
               </div>
             ))}

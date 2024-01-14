@@ -171,13 +171,22 @@ const getAccountById = async (req, res) => {
   }
 };
 
-const getAccountByEmail = async (req, res) => {
-  const email = req.params.email;
-  console.log(req);
+const getAccountByEmailFromToken = async (req, res) => {
+  const token = req.headers.authorization.split(" ")[1];
+  
+  if (!token) {
+    return res.status(401).json({
+      status: "missing token",
+      message: "Unauthorized",
+    });
+  }
+
+  const decodedToken = jwt.decode(token);
+  
   try {
     const [data] = await db
       .promise()
-      .query("SELECT * FROM ACCOUNT WHERE email = ?", [email]);
+      .query("SELECT * FROM ACCOUNT WHERE email = ?", [decodedToken.userId]);
 
     if (data.length === 0) {
       return res.status(404).json({
@@ -228,7 +237,7 @@ module.exports = {
   login,
   getAllAccounts,
   getAccountById,
-  getAccountByEmail,
+  getAccountByEmailFromToken,
   addAccount,
   resetPassword
 };

@@ -42,6 +42,7 @@ const useLogin = () => {
       const response = await axios.post('http://localhost:8800/api/login', formData);
     
       if (response.data.success) {
+        localStorage.setItem('token', response.data.token);
         setIsLoggedIn(true);
         setErrorMessage('');
         navigate('/');

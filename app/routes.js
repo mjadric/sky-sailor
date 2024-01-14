@@ -23,11 +23,11 @@ router.post("/planes", planeController.addPlane);
 
 router.get("/accounts", accountController.getAllAccounts);
 router.get("/accounts/:id", accountController.getAccountById);
-router.get("/acc/:email", accountController.getAccountByEmail);
+router.get("/acc", accountController.getAccountByEmailFromToken);
 router.post("/accounts", accountController.addAccount);
 router.post("/login", accountController.login);
 router.post("/signup", accountController.userSignUp);
-router.post('/reset-password', accountController.resetPassword);
+router.post("/reset-password", accountController.resetPassword);
 
 router.get("/flights", flightController.getAllFlights);
 router.get("/flights/:id", flightController.getFlightById);

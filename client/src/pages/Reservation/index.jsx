@@ -1,44 +1,11 @@
 import ReservationForm from "./ReservationForm";
 import { Container, Row, Col, ListGroup, Badge } from "react-bootstrap";
-import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import jwt_decode from "jwt-decode";
-import axios from "axios";
+import { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const ReservationPage = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const flight = location.state?.flight;
-  const [accountId, setAccountId] = useState(0);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      navigate("/login");
-    }
-
-    if (token) {
-      const decoded = jwt_decode(token);
-      fetchAccountId(decoded.email);
-    }
-  }, []);
-
-  const fetchAccountId = async (email) => {
-    try {
-      const response = await axios.get("http://localhost:8800/api/acc/", {
-        params: { email: email },
-      });
-      if (response.data && response.data.data.account) {
-        setAccountId(response.data.data.account[0].account_ID);
-      } else {
-        navigate("/login");
-      }
-    } catch (err) {
-      console.log("Failed to fetch account:", err);
-      navigate("/login");
-    }
-  };
 
   const [totalPrice, setTotalPrice] = useState(flight.adultSeatPrice);
 
@@ -47,26 +14,38 @@ const ReservationPage = () => {
       <Row className="justify-content-md-center mt-4 pt-4 border p-4">
         <h1>Rezervacija</h1>
         <Col md={6} className="p-8">
-          <ReservationForm
-            flight={flight}
-            user={accountId}
-            setTotalPrice={setTotalPrice}
-          />
+          <ReservationForm flight={flight} setTotalPrice={setTotalPrice} />
         </Col>
         <Col md={6}>
           <ListGroup>
             <ListGroup.Item>
-              <strong>Vrijeme polijetanja:</strong> {flight.departureTimeDate}
+              <strong>Vrijeme poljetanja:</strong>{" "}
+              {new Date(flight.departureTime).toLocaleTimeString([], {
+                year: "numeric",
+                month: "numeric",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              })}
             </ListGroup.Item>
             <ListGroup.Item>
-              <strong>Vrijeme slijetanja:</strong> {flight.arrivalTimeDate}
+              <strong>Vrijeme sljetanja:</strong>{" "}
+              {new Date(flight.arrivalTime).toLocaleTimeString([], {
+                year: "numeric",
+                month: "numeric",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              })}
             </ListGroup.Item>
             <ListGroup.Item>
-              <strong>Mjesto polijetanja:</strong> {flight.departureTownName},{" "}
+              <strong>Mjesto poljetanja:</strong> {flight.departureTownName},{" "}
               {flight.departureCountry}
             </ListGroup.Item>
             <ListGroup.Item>
-              <strong>Mjesto slijetanja:</strong> {flight.destinationTownName},{" "}
+              <strong>Mjesto sljetanja:</strong> {flight.destinationTownName},{" "}
               {flight.destinationCountry}
             </ListGroup.Item>
           </ListGroup>
