@@ -14,6 +14,17 @@ const ResultsPage = () => {
     navigate("/");
   };
 
+  if (flights.length === 0) {
+    return (
+      <div className="mt-4 pt-4 text-center">
+        <h2>Nema dostupnih letova</h2>
+        <Button variant="primary" onClick={handleBackClick}>
+          Nazad na pretragu
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div
       className="mt-4 pt-4 text-center"
@@ -28,7 +39,7 @@ const ResultsPage = () => {
                   md={7}
                   className="d-flex flex-column justify-content-center">
                   <Card.Title>
-                    {flight.departureTownName} ({flight.departureCountry}) -{" "}
+                    {flight.departureTownName} ({flight.departureCountry}) -
                     {flight.destinationTownName} ({flight.destinationCountry})
                   </Card.Title>
                   <Card.Text className="departure-arrival-time">
@@ -36,8 +47,8 @@ const ResultsPage = () => {
                       hour: "2-digit",
                       minute: "2-digit",
                       hour12: false,
-                    })}{" "}
-                    -{" "}
+                    })}
+                    -
                     {new Date(flight.arrivalTime).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -49,7 +60,7 @@ const ResultsPage = () => {
                   md={3}
                   className="d-flex flex-column justify-content-center">
                   <Card.Text>
-                    Osnovna cijena:{" "}
+                    Osnovna cijena:
                     <Badge pill bg="danger">
                       {flight.adultSeatPrice}€
                     </Badge>
