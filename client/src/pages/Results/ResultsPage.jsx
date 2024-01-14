@@ -16,9 +16,9 @@ const ResultsPage = () => {
 
   if (flights.length === 0) {
     return (
-      <div className="mt-4 pt-4 text-center">
-        <h2>Nema dostupnih letova</h2>
-        <Button variant="primary" onClick={handleBackClick}>
+      <div className="d-flex flex-column align-items-center justify-content-center mt-4 pt-4 text-center" style={{ height: "100vh" }}>
+        <h2 className="mt-4">Nema dostupnih letova</h2>
+        <Button variant="primary" className="mt-4" onClick={handleBackClick}>
           Nazad na pretragu
         </Button>
       </div>
