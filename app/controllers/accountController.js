@@ -233,6 +233,66 @@ const getAccount = async (req, res) => {
   }
 };
 
+const authenticateToken = async (req, res, next) => {
+  const tokenHeader = req.headers['authorization'];
+
+  if (!tokenHeader) {
+    return res.status(401).json({ success: false, error: 'Unauthorized: No token provided' });
+  }
+
+  const token = tokenHeader.split(' ')[1];
+
+  console.log('Received Token:', token);
+
+  try {
+    const user = await jwt.verify(token, 'shared_secret_key');
+    req.user = user;
+    next();
+  } catch (err) {
+    console.error('JWT Verification Error:', err);
+    return res.status(403).json({ success: false, error: 'Forbidden: Invalid token' });
+  }
+};
+
+const updatePhoneNumber = async (req, res) => {
+try {
+  const user = req.user;
+
+  if (!user) {
+    return res.status(401).json({ success: false, error: 'Unauthorized: No user data available' });
+  }
+
+  const newPhoneNumber = req.body.phoneNumber;
+
+  const existingUser = await getUserByEmail(user.userId);
+
+  if (!existingUser) {
+    console.error('User not found in the database');
+    return res.status(404).json({ success: false, message: 'User not found in the database' });
+  }
+
+  await db.promise().query(
+    'UPDATE account SET phoneNumber = ? WHERE email = ?',
+    [newPhoneNumber, user.userId]
+  );
+
+  console.log('Phone number updated successfully');
+  return res.json({ success: true, message: 'Phone number updated successfully' });
+} catch (error) {
+  console.error('Error updating phone number:', error);
+  return res.status(500).json({ success: false, error: 'Internal server error' });
+}
+};
+
+const getUserByEmail = async (email) => {
+try {
+  const [results] = await db.promise().query("SELECT * FROM account WHERE email = ?", [email]);
+  return results.length > 0 ? results[0] : null;
+} catch (error) {
+  console.error('Error getting user by email:', error);
+  return null;
+}
+};
 
 module.exports = {
   userSignUp,
@@ -241,5 +301,7 @@ module.exports = {
   getAccountById,
   addAccount,
   resetPassword,
-  getAccount
+  getAccount,
+  updatePhoneNumber,
+  authenticateToken
 };

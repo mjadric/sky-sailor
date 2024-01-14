@@ -2,6 +2,8 @@ const request = require("supertest");
 const app = require("../../app/index");
 const db = require("../../app/database");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
 
 jest.mock("../../app/database", () => ({
   promise: jest.fn().mockReturnThis(),
@@ -264,5 +266,35 @@ describe("Password Reset Function", () => {
     expect(response.status).toBe(404);
     expect(response.body.success).toBe(false);
     expect(response.body.error).toBe("User not found");
+  });
+});
+
+
+describe("Account Routes", () => {
+  it("should return 401 for requests without a token", async () => {
+    const response = await request(app).get("/api/account");
+
+    expect(response.status).toBe(401);
+    expect(response.body.success).toBe(false);
+    expect(response.body.error).toBe("Unauthorized: No token provided");
+  });
+
+  it("should return 403 for requests with an invalid token", async () => {
+    const invalidToken = "invalidToken";
+
+    const verifySpy = jest.spyOn(jwt, "verify");
+    verifySpy.mockImplementationOnce(() => {
+      throw new Error("Invalid token");
+    });
+
+    const response = await request(app)
+      .get("/api/account")
+      .set("Authorization", `Bearer ${invalidToken}`);
+
+    expect(response.status).toBe(403);
+    expect(response.body.success).toBe(false);
+    expect(response.body.error).toBe("Forbidden: Invalid token");
+
+    expect(verifySpy).toHaveBeenCalledWith(invalidToken, 'shared_secret_key');
   });
 });
