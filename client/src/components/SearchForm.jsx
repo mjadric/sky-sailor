@@ -80,7 +80,7 @@ const SearchForm = () => {
       );
       const data = await response.json();
       if (data.status === "success") {
-        navigate("/results-container", {
+        navigate("/search-results", {
           state: { flights: data.data.flights },
         });
       } else {
