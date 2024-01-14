@@ -4,6 +4,7 @@ const db = require("../../app/database");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+jest.mock("bcrypt");
 
 jest.mock("../../app/database", () => ({
   promise: jest.fn().mockReturnThis(),
@@ -11,7 +12,6 @@ jest.mock("../../app/database", () => ({
   connect: jest.fn(),
 }));
 
-jest.mock("bcrypt");
 
 const mockUserData = {
   email: "test@example.com",
@@ -298,3 +298,9 @@ describe("Account Routes", () => {
     expect(verifySpy).toHaveBeenCalledWith(invalidToken, 'shared_secret_key');
   });
 });
+
+jest.mock("../../app/database", () => ({
+  promise: jest.fn().mockReturnThis(),
+  query: jest.fn(),
+  connect: jest.fn(),
+}));
