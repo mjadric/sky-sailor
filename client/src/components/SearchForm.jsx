@@ -116,8 +116,7 @@ const SearchForm = () => {
                 <a
                   className="dropdown-item"
                   key={town.town_ID}
-                  onClick={() => selectTown(town.name, setDepartureTown)}
-                >
+                  onClick={() => selectTown(town.name, setDepartureTown)}>
                   {town.name}
                 </a>
               ))}
@@ -147,8 +146,7 @@ const SearchForm = () => {
                 <a
                   className="dropdown-item"
                   key={town.town_ID}
-                  onClick={() => selectTown(town.name, setDestinationTown)}
-                >
+                  onClick={() => selectTown(town.name, setDestinationTown)}>
                   {town.name}
                 </a>
               ))}

@@ -28,8 +28,7 @@ const ResultsPage = () => {
   return (
     <div
       className="mt-4 pt-4 text-center"
-      style={{ display: "flex", flexDirection: "column" }}
-    >
+      style={{ display: "flex", flexDirection: "column" }}>
       <h1>Rezultati pretrage</h1>
       <div className="results-container">
         {flights.map((flight, index) => (
@@ -38,8 +37,7 @@ const ResultsPage = () => {
               <Row>
                 <Col
                   md={7}
-                  className="d-flex flex-column justify-content-center"
-                >
+                  className="d-flex flex-column justify-content-center">
                   <Card.Title>
                     {flight.departureTownName} ({flight.departureCountry}) -
                     {flight.destinationTownName} ({flight.destinationCountry})
@@ -60,8 +58,7 @@ const ResultsPage = () => {
                 </Col>
                 <Col
                   md={3}
-                  className="d-flex flex-column justify-content-center"
-                >
+                  className="d-flex flex-column justify-content-center">
                   <Card.Text>
                     Osnovna cijena:
                     <Badge pill bg="danger">
@@ -71,13 +68,11 @@ const ResultsPage = () => {
                 </Col>
                 <Col
                   md={2}
-                  className="d-flex align-items-center justify-content-end"
-                >
+                  className="d-flex align-items-center justify-content-end">
                   <Button
                     variant="primary"
                     className="reserve-button"
-                    onClick={() => handleReserveClick(flight)}
-                  >
+                    onClick={() => handleReserveClick(flight)}>
                     Rezerviraj
                   </Button>
                 </Col>
@@ -91,8 +86,7 @@ const ResultsPage = () => {
           variant="secondary"
           className="ms-2 btn-sm px-3"
           style={{ width: "fit-content" }}
-          onClick={handleBackClick}
-        >
+          onClick={handleBackClick}>
           Povratak
         </Button>
       </div>
