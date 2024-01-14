@@ -1,4 +1,15 @@
-const LoginForm = ({ email, password, handleInputChange, handleSubmit, handleRegistrationRedirect, errorMessage, handleResetPasswordRedirect }) => {
+// ResetPasswordForm.jsx
+
+import React from 'react';
+
+const ResetPasswordForm = ({
+  formData: { email, newPassword, confirmPassword },  
+  handleInputChange,
+  handleSubmit,
+  handleLoginRedirect,
+  handleRegistrationRedirect,
+  errorMessage,
+}) => {
   return (
     <section className="text-center text-lg-start">
       <style>
@@ -30,10 +41,9 @@ const LoginForm = ({ email, password, handleInputChange, handleSubmit, handleReg
               }}
             >
               <div className="card-body p-5 shadow-5 text-center">
-                <h2 className="fw-bold mb-5">Login to Your Account</h2>
+                <h2 className="fw-bold mb-5">Reset Your Password</h2>
                 {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
                 <form onSubmit={handleSubmit}>
-
                   <div className="form-outline mb-4">
                     <input
                       type="email"
@@ -53,32 +63,46 @@ const LoginForm = ({ email, password, handleInputChange, handleSubmit, handleReg
                       type="password"
                       id="form3Example4"
                       className="form-control"
-                      name="password"
-                      value={password}
+                      name="newPassword"
+                      value={newPassword}
                       onChange={handleInputChange}
                     />
                     <label className="form-label" htmlFor="form3Example4">
-                      Password
+                      New Password
+                    </label>
+                  </div>
+
+                  <div className="form-outline mb-4">
+                    <input
+                      type="password"
+                      id="form3Example5"
+                      className="form-control"
+                      name="confirmPassword"
+                      value={confirmPassword}
+                      onChange={handleInputChange}
+                    />
+                    <label className="form-label" htmlFor="form3Example5">
+                      Confirm Password
                     </label>
                   </div>
 
                   <button type="submit" className="btn btn-primary btn-block mb-4">
-                    Login
+                    Reset
                   </button>
 
                   <p className="mb-0">
-                    Don't have an account?{' '}
-                   <button type="button" className="btn btn-link" onClick={handleRegistrationRedirect}>
-                   Sign up
-                   </button>
-                 </p>
-
-                 <p>
-                  <button type="button" className="btn btn-link" onClick={handleResetPasswordRedirect}>
-                  Reset Password
-                  </button>
+                    Back to login{' '}
+                    <button type="button" className="btn btn-link" onClick={handleLoginRedirect}>
+                      Log in
+                    </button>
                   </p>
 
+                  <p className="mb-0">
+                    Don't have an account?{' '}
+                    <button type="button" className="btn btn-link" onClick={handleRegistrationRedirect}>
+                      Sign up
+                    </button>
+                  </p>
                 </form>
               </div>
             </div>
@@ -97,4 +121,4 @@ const LoginForm = ({ email, password, handleInputChange, handleSubmit, handleReg
   );
 };
 
-export default LoginForm;
+export default ResetPasswordForm;

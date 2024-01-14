@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPageButtons from "./components/LandingPageButtons";
 import LoginForm from "./pages/Login";
 import RegistrationForm from "./pages/Registration";
+import ResetPasswordForm from "./pages/ResetPassword";
 
 const App = () => {
   return (
@@ -36,6 +37,7 @@ const App = () => {
         />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/registration" element={<RegistrationForm />} />
+        <Route path="/reset-password" element={<ResetPasswordForm />} />
       </Routes>
     </BrowserRouter>
   );
