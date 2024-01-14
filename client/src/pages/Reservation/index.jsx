@@ -1,20 +1,43 @@
 import ReservationForm from "./ReservationForm";
 import { Container, Row, Col, ListGroup, Badge } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import jwt_decode from "jwt-decode";
+import axios from "axios";
 
 const ReservationPage = () => {
-  const flight = {
-    flightId: 3,
-    departureTimeDate: "2024-01-10",
-    arrivalTimeDate: "2024-01-10",
-    extraBaggagePrice: "30.00",
-    flightInsurancePrice: "15.00",
-    departureTownName: "Pariz",
-    departureCountry: "Francuska",
-    destinationTownName: "Lyon",
-    destinationCountry: "Francuska",
-    timezoneName: "Europe/Copenhagen",
-    adultSeatPrice: "230.00",
+  const navigate = useNavigate();
+  const location = useLocation();
+  const flight = location.state?.flight;
+  const [accountId, setAccountId] = useState(0);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      navigate("/login");
+    }
+
+    if (token) {
+      const decoded = jwt_decode(token);
+      fetchAccountId(decoded.email);
+    }
+  }, []);
+
+  const fetchAccountId = async (email) => {
+    try {
+      const response = await axios.get("http://localhost:8800/api/acc/", {
+        params: { email: email },
+      });
+      if (response.data && response.data.data.account) {
+        setAccountId(response.data.data.account[0].account_ID);
+      } else {
+        navigate("/login");
+      }
+    } catch (err) {
+      console.log("Failed to fetch account:", err);
+      navigate("/login");
+    }
   };
 
   const [totalPrice, setTotalPrice] = useState(flight.adultSeatPrice);
@@ -26,7 +49,7 @@ const ReservationPage = () => {
         <Col md={6} className="p-8">
           <ReservationForm
             flight={flight}
-            accountId={1}
+            user={accountId}
             setTotalPrice={setTotalPrice}
           />
         </Col>
