@@ -14,10 +14,22 @@ const ResultsPage = () => {
     navigate("/");
   };
 
+  if (flights.length === 0) {
+    return (
+      <div className="mt-4 pt-4 text-center">
+        <h2>Nema dostupnih letova</h2>
+        <Button variant="primary" onClick={handleBackClick}>
+          Nazad na pretragu
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div
       className="mt-4 pt-4 text-center"
-      style={{ display: "flex", flexDirection: "column" }}>
+      style={{ display: "flex", flexDirection: "column" }}
+    >
       <h1>Rezultati pretrage</h1>
       <div className="results-container">
         {flights.map((flight, index) => (
@@ -26,9 +38,10 @@ const ResultsPage = () => {
               <Row>
                 <Col
                   md={7}
-                  className="d-flex flex-column justify-content-center">
+                  className="d-flex flex-column justify-content-center"
+                >
                   <Card.Title>
-                    {flight.departureTownName} ({flight.departureCountry}) -{" "}
+                    {flight.departureTownName} ({flight.departureCountry}) -
                     {flight.destinationTownName} ({flight.destinationCountry})
                   </Card.Title>
                   <Card.Text className="departure-arrival-time">
@@ -36,8 +49,8 @@ const ResultsPage = () => {
                       hour: "2-digit",
                       minute: "2-digit",
                       hour12: false,
-                    })}{" "}
-                    -{" "}
+                    })}
+                    -
                     {new Date(flight.arrivalTime).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -47,9 +60,10 @@ const ResultsPage = () => {
                 </Col>
                 <Col
                   md={3}
-                  className="d-flex flex-column justify-content-center">
+                  className="d-flex flex-column justify-content-center"
+                >
                   <Card.Text>
-                    Osnovna cijena:{" "}
+                    Osnovna cijena:
                     <Badge pill bg="danger">
                       {flight.adultSeatPrice}€
                     </Badge>
@@ -57,11 +71,13 @@ const ResultsPage = () => {
                 </Col>
                 <Col
                   md={2}
-                  className="d-flex align-items-center justify-content-end">
+                  className="d-flex align-items-center justify-content-end"
+                >
                   <Button
                     variant="primary"
                     className="reserve-button"
-                    onClick={() => handleReserveClick(flight)}>
+                    onClick={() => handleReserveClick(flight)}
+                  >
                     Rezerviraj
                   </Button>
                 </Col>
@@ -75,7 +91,8 @@ const ResultsPage = () => {
           variant="secondary"
           className="ms-2 btn-sm px-3"
           style={{ width: "fit-content" }}
-          onClick={handleBackClick}>
+          onClick={handleBackClick}
+        >
           Povratak
         </Button>
       </div>
