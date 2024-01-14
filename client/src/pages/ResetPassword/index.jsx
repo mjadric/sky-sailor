@@ -1,30 +1,28 @@
-import LoginForm from './LoginForm'; 
-import useLogin from './useLogin'; 
+import ResetPasswordForm from './ResetPasswordForm'; 
+import useResetPassword from './useResetPassword'; 
 
-const LoginPage = () => {
+const ResetPassword = () => {
   const {
     formData,
-    isLoggedIn,
     errorMessage,
     handleInputChange,
     handleSubmit,
-    handleRegistrationRedirect, 
-    handleResetPasswordRedirect
-  } = useLogin(); 
+    handleLoginRedirect,
+    handleRegistrationRedirect
+  } = useResetPassword(); 
 
   return (
     <div>
-      <LoginForm
+      <ResetPasswordForm
         formData={formData}
         handleInputChange={handleInputChange}
         handleSubmit={handleSubmit}
+        handleLoginRedirect={handleLoginRedirect}
         handleRegistrationRedirect={handleRegistrationRedirect}
-        handleResetPasswordRedirect={handleResetPasswordRedirect} 
         errorMessage={errorMessage}
-        isLoggedIn={isLoggedIn} 
       />
     </div>
   );
 };
 
-export default LoginPage;
+export default ResetPassword;

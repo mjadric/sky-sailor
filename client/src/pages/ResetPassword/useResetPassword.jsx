@@ -2,13 +2,13 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const useLogin = () => {
+const useResetPassword = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
-    password: '',
+    newPassword: '',
+    confirmPassword: '',  
   });
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleInputChange = (e) => {
@@ -23,47 +23,50 @@ const useLogin = () => {
     navigate('/registration');
   };
 
-  const handleResetPasswordRedirect = () => {
-    navigate('/reset-password');
+  const redirectToLogin = () => {
+    navigate('/login');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    const requiredFields = ['email', 'password'];
+
+    const requiredFields = ['email', 'newPassword', 'confirmPassword'];
     const missingFields = requiredFields.filter((field) => !formData[field]);
-  
+
     if (missingFields.length > 0) {
       setErrorMessage('Please fill in all required fields');
       return;
     }
-  
-    try {
-      const response = await axios.post('http://localhost:8800/api/login', formData);
-    
-      if (response.data.success) {
-        setIsLoggedIn(true);
-        setErrorMessage('');
-        navigate('/');
-      }
-    } catch (error) {
-      setErrorMessage('Account does not exist.');
-      setIsLoggedIn(false);
-      console.log(error);
+
+    if (formData.newPassword !== formData.confirmPassword) {
+      setErrorMessage('Passwords do not match');
+      return;
     }
-    
+
+    try {
+        const response = await axios.post('http://localhost:8800/api/reset-password', formData);
+      
+        if (response.data.success) {
+          setErrorMessage('Password changed successfully');
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 400) {
+          setErrorMessage('You can only reset your password once in a day.');
+        } else {
+          setErrorMessage('Error resetting password.');
+        }
+      }
+      
   };
-  
 
   return {
     formData,
-    isLoggedIn,
     errorMessage,
     handleInputChange,
     handleSubmit,
+    handleLoginRedirect: redirectToLogin,
     handleRegistrationRedirect: redirectToRegistration,
-    handleResetPasswordRedirect: handleResetPasswordRedirect
   };
 };
 
-export default useLogin;
+export default useResetPassword;

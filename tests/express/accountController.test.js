@@ -55,49 +55,6 @@ describe("User Controller", () => {
     expect(response.body.error).toBe("Email is already registered. Please log in.");
   });
 
-  it("should log in an existing user", async () => {
-    const mockUser = {
-      email: "test@example.com",
-      passwordHash: "$2b$10$N2iPH/HoBJqLMthU6eC0GeaVSxSNSE3jKL.IJqffsJt9RvvvHw/Wm",
-    };
-
-    db.promise().query
-      .mockResolvedValueOnce([[mockUser]]);
-    bcrypt.compare.mockResolvedValueOnce(true);
-
-    const response = await request(app)
-      .post("/api/login")
-      .send({
-        email: mockUserData.email,
-        password: mockUserData.password,
-      });
-
-    expect(response.status).toBe(200);
-    expect(response.body.success).toBe(true);
-    expect(response.body.token).toBeDefined();
-  });
-
-  it("should handle invalid login credentials", async () => {
-    const mockUser = {
-      email: "test@example.com",
-      passwordHash: "$2b$10$N2iPH/HoBJqLMthU6eC0GeaVSxSNSE3jKL.IJqffsJt9RvvvHw/Wm",
-    };
-
-    db.promise().query.mockResolvedValueOnce([[mockUser]]);
-    bcrypt.compare.mockResolvedValueOnce(false);
-
-    const response = await request(app)
-      .post("/api/login")
-      .send({
-        email: mockUserData.email,
-        password: "wrongPassword",
-      });
-
-    expect(response.status).toBe(401);
-    expect(response.body.success).toBe(false);
-    expect(response.body.error).toBe("Invalid login credentials.");
-  });
-
   it("should get all accounts", async () => {
     const mockData = [{ accountId: 1, email: "test1@example.com" }];
     db.promise().query.mockResolvedValueOnce([mockData]);
@@ -263,5 +220,49 @@ describe("Login Function", () => {
 
     expect(response.status).toBe(500);
     expect(response.body.success).toBe(false);
+  });
+});
+
+describe("Password Reset Function", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should reset password successfully", async () => {
+    const mockUser = {
+      email: "test@example.com",
+      passwordHash: "$2b$10$N2iPH/HoBJqLMthU6eC0GeaVSxSNSE3jKL.IJqffsJt9RvvvHw/Wm",
+    };
+
+    db.promise().query
+      .mockResolvedValueOnce([[mockUser]])
+      .mockResolvedValueOnce([{ affectedRows: 1 }]);
+    bcrypt.hash.mockResolvedValueOnce('hashedPassword');
+
+    const response = await request(app)
+      .post("/api/reset-password")
+      .send({
+        email: "test@example.com",
+        newPassword: "newPassword",
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBe(true);
+    expect(response.body.message).toBe("Password reset successful");
+  });
+
+  it("should handle user not found during password reset", async () => {
+    db.promise().query.mockResolvedValueOnce([[]]);
+
+    const response = await request(app)
+      .post("/api/reset-password")
+      .send({
+        email: "nonexistent@example.com",
+        newPassword: "newPassword",
+      });
+
+    expect(response.status).toBe(404);
+    expect(response.body.success).toBe(false);
+    expect(response.body.error).toBe("User not found");
   });
 });
