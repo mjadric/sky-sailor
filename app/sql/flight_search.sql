@@ -17,6 +17,7 @@ BEGIN
 
     IF resultCount > 0 THEN
         SELECT 
+            f.flight_ID,
             t1.name AS departureTownName,
             c1.name AS departureCountry,
             t2.name AS destinationTownName,
@@ -26,7 +27,9 @@ BEGIN
             f.arrivalTimeDate AS arrivalTime,
             tz.name AS timezoneName,
             ftc.adultSeatPrice,
-            ftc.childSeatPrice
+            ftc.childSeatPrice,
+            f.extraBaggagePrice,
+            f.flightInsurancePrice
         FROM flight AS f
         LEFT JOIN airport AS a1 ON f.departureAirport_ID = a1.airport_ID
         LEFT JOIN town AS t1 ON a1.town_id = t1.town_ID

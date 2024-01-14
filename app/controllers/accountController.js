@@ -171,6 +171,35 @@ const getAccountById = async (req, res) => {
   }
 };
 
+const getAccountByEmail = async (req, res) => {
+  const email = req.params.email;
+  console.log(req);
+  try {
+    const [data] = await db
+      .promise()
+      .query("SELECT * FROM ACCOUNT WHERE email = ?", [email]);
+
+    if (data.length === 0) {
+      return res.status(404).json({
+        status: "failed to get account",
+        message: "Account not found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        account: data,
+      },
+    });
+  } catch (err) {
+    return res.status(500).json({
+      status: "failed to get account",
+      message: err.message,
+    });
+  }
+}
+
 const addAccount = async (req, res) => {
   try {
     const [data] = await db
@@ -199,6 +228,7 @@ module.exports = {
   login,
   getAllAccounts,
   getAccountById,
+  getAccountByEmail,
   addAccount,
   resetPassword
 };
