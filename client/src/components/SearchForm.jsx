@@ -172,52 +172,6 @@ const SearchForm = () => {
             required
           />
         </div>
-        {/* <input
-          type="text"
-          placeholder="Mjesto polijetanja"
-          value={departureTown}
-          onChange={(e) =>
-            handleTownInputChange(e, setDepartureTown, "departure")
-          }
-          onFocus={() => handleInputFocus("departure")}
-        />
-        {showDropdown && activeInput === "departure" && (
-          <div className="dropdown">
-            {townSearchResults.map((town) => (
-              <div
-                key={town.town_ID}
-                onClick={() => selectTown(town.name, setDepartureTown)}>
-                {town.name}
-              </div>
-            ))}
-          </div>
-        )}
-        <input
-          type="text"
-          placeholder="Mjesto slijetanja"
-          value={destinationTown}
-          onChange={(e) =>
-            handleTownInputChange(e, setDestinationTown, "destination")
-          }
-          onFocus={() => handleInputFocus("destination")}
-        />
-        {showDropdown && activeInput === "destination" && (
-          <div className="dropdown">
-            {townSearchResults.map((town) => (
-              <div
-                key={town.town_ID}
-                onClick={() => selectTown(town.name, setDestinationTown)}>
-                {town.name}
-              </div>
-            ))}
-          </div>
-        )}
-        <input
-          type="date"
-          placeholder="Datum polijetanja"
-          value={departureDate}
-          onChange={(e) => setDepartureDate(e.target.value)}
-        /> */}
 
         <button type="submit" className="btn btn-primary">
           Pretraži letove

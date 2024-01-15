@@ -37,7 +37,7 @@ const ReservationForm = ({ flight, setTotalPrice }) => {
             Authorization: `Bearer ${token}`,
           },
         });
-    
+
         if (response.status === 401) {
           console.log("Failed to fetch account:", response);
           navigate("/login");
@@ -163,7 +163,7 @@ const ReservationForm = ({ flight, setTotalPrice }) => {
     setTotalPrice,
   ]);
 
-  const handleInputChange =  (event) => {
+  const handleInputChange = (event) => {
     const { name, type, checked } = event.target;
 
     if (type === "checkbox") {
@@ -186,7 +186,7 @@ const ReservationForm = ({ flight, setTotalPrice }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
+
     if (formData.accountId < 1) {
       navigate(-1);
       return;
@@ -198,9 +198,7 @@ const ReservationForm = ({ flight, setTotalPrice }) => {
     }
 
     if (selectedClass.name === undefined || ticketType === "") {
-      setPriceWarning(
-        "Klasa i vrsta karte su obavezna polja."
-      );
+      setPriceWarning("Klasa i vrsta karte su obavezna polja.");
       return;
     }
 
@@ -208,8 +206,11 @@ const ReservationForm = ({ flight, setTotalPrice }) => {
       return;
     }
 
-    const response = await axios.post("http://localhost:8800/api/reservations", formData);
-    
+    const response = await axios.post(
+      "http://localhost:8800/api/reservations",
+      formData
+    );
+
     console.log(response);
     if (response.status === 201) {
       window.alert("Uspješno ste rezervirali kartu!");
