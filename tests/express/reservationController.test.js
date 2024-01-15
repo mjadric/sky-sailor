@@ -144,7 +144,7 @@ describe("Reservation controller", () => {
       .post(`/api/reservations`)
       .send(mockReservation);
 
-    expect(res.statusCode).toBe(200);
+    expect(res.statusCode).toBe(201);
     expect(res.body).toEqual({
       status: "success",
       data: {

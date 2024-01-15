@@ -29,7 +29,7 @@ INSERT INTO `aviokompanija`.`flight_seat`
 (`available`, `flight_ID`, `seat_ID`)
 SELECT
   1 AS `available`,
-  3 AS `flight_ID`,
+  25 AS `flight_ID`,
   seat_id
 FROM (
   SELECT
@@ -43,14 +43,14 @@ INSERT INTO `aviokompanija`.`flight_seat`
 (`available`, `flight_ID`, `seat_ID`)
 SELECT
   1 AS `available`,
-  4 AS `flight_ID`,
-  seat_id + 150 AS seat_id
+  27 AS `flight_ID`,
+  seat_id + 500 AS seat_id
 FROM (
   SELECT
     ROW_NUMBER() OVER () AS seat_id
   FROM information_schema.columns
 ) numbered_seats
-WHERE seat_id <= 200;  -- Ograničavamo broj redova na 200 da bismo dobili sedišta od 151 do 350
+WHERE seat_id <= 170;  -- Ograničavamo broj redova na 200 da bismo dobili sedišta od 151 do 350
 
 
 

@@ -31,7 +31,7 @@ const useLogin = () => {
     localStorage.setItem('token', token);
     setIsLoggedIn(true);
     setErrorMessage('');
-    navigate('/');
+    navigate(-1);
   };
 
   const handleSubmit = async (e) => {

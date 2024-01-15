@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import axios from "axios";
 
 const SearchForm = () => {
   const [departureTown, setDepartureTown] = useState("");
   const [destinationTown, setDestinationTown] = useState("");
   const [departureDate, setDepartureDate] = useState("");
-  const [departureTime, setDepartureTime] = useState("");
-  const [arrivalTime, setArrivalTime] = useState("");
   const [townSearchResults, setTownSearchResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeInput, setActiveInput] = useState(null);
@@ -75,10 +74,15 @@ const SearchForm = () => {
     const destinationTownId = await getTownIdByName(destinationTown);
 
     if (departureTownId && destinationTownId) {
-      const response = await fetch(
-        `http://localhost:8800/api/search?departureTownId=${departureTownId}&destinationTownId=${destinationTownId}&departureDate=${departureDate}&departureTime=${departureTime}&arrivalTime=${arrivalTime}`
-      );
-      const data = await response.json();
+      const response = await axios.get(`http://localhost:8800/api/search`, {
+        params: {
+          departureTownId: departureTownId,
+          destinationTownId: destinationTownId,
+          departureDate: departureDate,
+        },
+      });
+
+      const data = response.data;
       if (data.status === "success") {
         navigate("/search-results", {
           state: { flights: data.data.flights },
