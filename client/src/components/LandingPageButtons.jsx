@@ -9,6 +9,9 @@ const LandingPageButtons = () => {
       <Link to="/registration">
         <button className="btn btn-success">Registracija</button>
       </Link>
+      <Link to="/account">
+        <button className="btn btn-success">Account</button>
+      </Link>
     </div>
   );
 };
