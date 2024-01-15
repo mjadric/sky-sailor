@@ -31,7 +31,7 @@ const useLogin = () => {
     localStorage.setItem('token', token);
     setIsLoggedIn(true);
     setErrorMessage('');
-    navigate(-1);
+    navigate('/');
   };
 
   const handleSubmit = async (e) => {
@@ -47,14 +47,17 @@ const useLogin = () => {
 
     try {
       const response = await axios.post('http://localhost:8800/api/login', formData);
-
+  
       if (response.data.success) {
         handleLoginSuccess(response.data.token);
       }
     } catch (error) {
-      setErrorMessage('Account does not exist.');
+      if (error.response && error.response.status === 401) {
+        setErrorMessage('Invalid password. Please try again.');
+      } else {
+        setErrorMessage('Account does not exist.');
+      }
       setIsLoggedIn(false);
-      console.log(error);
     }
   };
   
