@@ -204,7 +204,7 @@ const getAccount = async (req, res) => {
     console.log('User ID from token:', user.userId);
 
     const [data] = await db.promise().query(`
-      SELECT firstName, lastName, email, phoneNumber
+      SELECT account_ID, firstName, lastName, email, phoneNumber
       FROM account
       WHERE email = ?
     `, [user.userId]);
@@ -232,6 +232,7 @@ const getAccount = async (req, res) => {
     });
   }
 };
+
 
 const authenticateToken = async (req, res, next) => {
   const tokenHeader = req.headers['authorization'];

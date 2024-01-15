@@ -1,7 +1,6 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 
-
 const homeController = require("./controllers/homeController");
 const flightController = require("./controllers/flightController");
 const accountController = require("./controllers/accountController");
@@ -48,8 +47,5 @@ router.get("/search", flightController.searchFlights);
 router.post("/flights", adminFlightController.addFlight);
 router.patch("/flights/:id", adminFlightController.updateFlight);
 router.delete("/flights/:id", adminFlightController.deleteFlight);
-
-
-
 
 module.exports = router;
