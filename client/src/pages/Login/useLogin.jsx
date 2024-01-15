@@ -45,7 +45,7 @@ const useLogin = () => {
         localStorage.setItem('token', response.data.token);
         setIsLoggedIn(true);
         setErrorMessage('');
-        navigate('/');
+        navigate(-1);
       }
     } catch (error) {
       setErrorMessage('Account does not exist.');
