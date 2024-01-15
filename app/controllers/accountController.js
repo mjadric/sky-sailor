@@ -171,44 +171,6 @@ const getAccountById = async (req, res) => {
   }
 };
 
-const getAccountByEmailFromToken = async (req, res) => {
-  const token = req.headers.authorization.split(" ")[1];
-  
-  if (!token) {
-    return res.status(401).json({
-      status: "missing token",
-      message: "Unauthorized",
-    });
-  }
-
-  const decodedToken = jwt.decode(token);
-  
-  try {
-    const [data] = await db
-      .promise()
-      .query("SELECT * FROM ACCOUNT WHERE email = ?", [decodedToken.userId]);
-
-    if (data.length === 0) {
-      return res.status(404).json({
-        status: "failed to get account",
-        message: "Account not found",
-      });
-    }
-
-    res.status(200).json({
-      status: "success",
-      data: {
-        account: data,
-      },
-    });
-  } catch (err) {
-    return res.status(500).json({
-      status: "failed to get account",
-      message: err.message,
-    });
-  }
-}
-
 const addAccount = async (req, res) => {
   try {
     const [data] = await db
@@ -231,13 +193,116 @@ const addAccount = async (req, res) => {
   }
 };
 
+const getAccount = async (req, res) => {
+  const user = req.user;
+
+  if (!user) {
+    return res.status(401).json({ success: false, error: 'Unauthorized: No user data available' });
+  }
+
+  try {
+    console.log('User ID from token:', user.userId);
+
+    const [data] = await db.promise().query(`
+      SELECT account_ID, firstName, lastName, email, phoneNumber
+      FROM account
+      WHERE email = ?
+    `, [user.userId]);
+
+    console.log('Fetched data:', data);
+
+    if (data.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'User data not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        account: data[0],
+      },
+    });
+  } catch (err) {
+    console.error('Error fetching user data:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+    });
+  }
+};
+
+
+const authenticateToken = async (req, res, next) => {
+  const tokenHeader = req.headers['authorization'];
+
+  if (!tokenHeader) {
+    return res.status(401).json({ success: false, error: 'Unauthorized: No token provided' });
+  }
+
+  const token = tokenHeader.split(' ')[1];
+
+  console.log('Received Token:', token);
+
+  try {
+    const user = await jwt.verify(token, 'shared_secret_key');
+    req.user = user;
+    next();
+  } catch (err) {
+    console.error('JWT Verification Error:', err);
+    return res.status(403).json({ success: false, error: 'Forbidden: Invalid token' });
+  }
+};
+
+const updatePhoneNumber = async (req, res) => {
+try {
+  const user = req.user;
+
+  if (!user) {
+    return res.status(401).json({ success: false, error: 'Unauthorized: No user data available' });
+  }
+
+  const newPhoneNumber = req.body.phoneNumber;
+
+  const existingUser = await getUserByEmail(user.userId);
+
+  if (!existingUser) {
+    console.error('User not found in the database');
+    return res.status(404).json({ success: false, message: 'User not found in the database' });
+  }
+
+  await db.promise().query(
+    'UPDATE account SET phoneNumber = ? WHERE email = ?',
+    [newPhoneNumber, user.userId]
+  );
+
+  console.log('Phone number updated successfully');
+  return res.json({ success: true, message: 'Phone number updated successfully' });
+} catch (error) {
+  console.error('Error updating phone number:', error);
+  return res.status(500).json({ success: false, error: 'Internal server error' });
+}
+};
+
+const getUserByEmail = async (email) => {
+try {
+  const [results] = await db.promise().query("SELECT * FROM account WHERE email = ?", [email]);
+  return results.length > 0 ? results[0] : null;
+} catch (error) {
+  console.error('Error getting user by email:', error);
+  return null;
+}
+};
 
 module.exports = {
   userSignUp,
   login,
   getAllAccounts,
   getAccountById,
-  getAccountByEmailFromToken,
   addAccount,
-  resetPassword
+  resetPassword,
+  getAccount,
+  updatePhoneNumber,
+  authenticateToken
 };

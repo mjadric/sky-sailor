@@ -32,23 +32,22 @@ const ReservationForm = ({ flight, setTotalPrice }) => {
           return;
         }
 
-        const response = await axios.get("http://localhost:8800/api/acc", {
+        const response = await axios.get("http://localhost:8800/api/account", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-
+    
         if (response.status === 401) {
           console.log("Failed to fetch account:", response);
           navigate("/login");
-          console.log(response);
           return;
         }
 
         if (response.data && response.data.data.account) {
           setFormData((prevData) => ({
             ...prevData,
-            accountId: response.data.data.account[0].account_ID,
+            accountId: response.data.data.account.account_ID,
           }));
         }
       } catch (err) {

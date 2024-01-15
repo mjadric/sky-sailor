@@ -1,4 +1,5 @@
 const express = require("express");
+const jwt = require("jsonwebtoken");
 
 const homeController = require("./controllers/homeController");
 const flightController = require("./controllers/flightController");
@@ -23,11 +24,12 @@ router.post("/planes", planeController.addPlane);
 
 router.get("/accounts", accountController.getAllAccounts);
 router.get("/accounts/:id", accountController.getAccountById);
-router.get("/acc", accountController.getAccountByEmailFromToken);
 router.post("/accounts", accountController.addAccount);
 router.post("/login", accountController.login);
 router.post("/signup", accountController.userSignUp);
-router.post("/reset-password", accountController.resetPassword);
+router.post('/reset-password', accountController.resetPassword);
+router.get("/account", accountController.authenticateToken, accountController.getAccount);
+router.post('/update-phone-number', accountController.authenticateToken, accountController.updatePhoneNumber);
 
 router.get("/flights", flightController.getAllFlights);
 router.get("/flights/:id", flightController.getFlightById);

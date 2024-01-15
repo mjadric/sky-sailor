@@ -27,32 +27,35 @@ const useLogin = () => {
     navigate('/reset-password');
   };
 
+  const handleLoginSuccess = (token) => {
+    localStorage.setItem('token', token);
+    setIsLoggedIn(true);
+    setErrorMessage('');
+    navigate(-1);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const requiredFields = ['email', 'password'];
     const missingFields = requiredFields.filter((field) => !formData[field]);
-  
+
     if (missingFields.length > 0) {
       setErrorMessage('Please fill in all required fields');
       return;
     }
-  
+
     try {
       const response = await axios.post('http://localhost:8800/api/login', formData);
-    
+
       if (response.data.success) {
-        localStorage.setItem('token', response.data.token);
-        setIsLoggedIn(true);
-        setErrorMessage('');
-        navigate(-1);
+        handleLoginSuccess(response.data.token);
       }
     } catch (error) {
       setErrorMessage('Account does not exist.');
       setIsLoggedIn(false);
       console.log(error);
     }
-    
   };
   
 

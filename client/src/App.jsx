@@ -8,6 +8,7 @@ import LoginForm from "./pages/Login";
 import RegistrationForm from "./pages/Registration";
 import ResetPasswordForm from "./pages/ResetPassword";
 import ResultsPage from "./pages/Results/ResultsPage";
+import AccountForm from "./pages/Account/AccountForm";
 import ReservationForm from "./pages/Reservation";
 
 const App = () => {
@@ -40,6 +41,7 @@ const App = () => {
         <Route path="/registration" element={<RegistrationForm />} />
         <Route path="/reset-password" element={<ResetPasswordForm />} />
         <Route path="/search-results" element={<ResultsPage />} />
+        <Route path="/account" element={<AccountForm />} />
         <Route path="/reservation" element={<ReservationForm />} />
       </Routes>
     </BrowserRouter>
