@@ -1,49 +1,49 @@
-# SkySailor - Rezervacija Aviokarti
+# SkySailor - Flight Ticket Reservation
 
-## Opis Projekta
+## Project Description
 
-Projekt je rađen za kolegij *Uvod u programsko inženjerstvo* na Prirodoslovno-matematičkom fakultetu. Ova web aplikacija omogućava korisnicima pregled i rezervaciju aviokarata. Projekt je razvijen koristeći JavaScript, Node.js i React.
+This project was developed for the course *Introduction to Software Engineering* at the Faculty of Science, University of Split. This web application enables users to browse and reserve flight tickets. The project was developed using JavaScript, Node.js, and React.
 
-## Funkcionalnosti
+## Features
 
-- **Prijava i Registracija:** Omogućava korisnicima stvaranje računa i prijavu na sustav, te administratorima prijavu.
-- **Pretraga Letova:** Brza pretraga dostupnih letova prema različitim kriterijima poput polazišta, destinacije i datuma.
-- **Rezervacija Karata:** Jednostavan proces rezervacije karata nakon odabira željenog leta.
-- **Administrativne Funkcionalnosti:** Omogućuje administratorima dodavanje i ažuriranje informacija o letovima.
+- **Login and Registration:** Allows users to create accounts and log in to the system, and administrators to log in.
+- **Flight Search:** Fast search of available flights according to various criteria such as departure, destination, and date.
+- **Ticket Reservation:** Simple ticket reservation process after selecting the desired flight.
+- **Administrative Functionalities:** Allows administrators to add and update flight information.
 
-## Postavljanje Projekta
+## Setting Up the Project
 
-1. **Preuzimanje Koda:**
+1. **Cloning the Code:**
    ```bash
    git clone https://github.com/ems78/sky-sailor.git
    cd sky-sailor
    ```
 
-2. **Instalacija Zavisnosti:**
+2. **Installing Dependencies:**
    ```bash
    npm install
    cd client/
    npm install
    ```
 
-3. **Pokretanje Express Servera:**
+3. **Starting the Express Server:**
    
-   Dok ste pozicionirani u root folderu
+   While positioned in the root folder
    ```bash
    npm start
    ```
 
-4. **Pokretanje React Aplikacije:**
+4. **Starting the React Application:**
     
-    Otvorite drugi terminal
+    Open another terminal
     ```bash
     cd client/
     npm run dev
     ```
 
-Aplikacija će biti dostupna na http://localhost:8800.
+The application will be available at http://localhost:8800.
 
-## Tehnologije Korištene
+## Technologies Used
 
 - JavaScript
 - Express
@@ -51,7 +51,7 @@ Aplikacija će biti dostupna na http://localhost:8800.
 - React
 - MySQL
 
-## Autori
+## Authors
 
 - [Ema Andrea Drašković](https://github.com/ems78)
 - [Nediljka Kujundžić](https://github.com/neda1010)
@@ -59,11 +59,10 @@ Aplikacija će biti dostupna na http://localhost:8800.
 - [Tomislav Jurič](https://github.com/tomisljuric)
 - [Franko Cvrlje](https://github.com/FrankNOTSinatra)
 
-## Licenca
+## License
 
-Ovaj projekt je licenciran pod MIT licencom - pogledajte [LICENSE.md](LICENSE.md) za detalje.
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-## Napomena
+## Note
 
-Projekt ne sadrži skriptu za stvaranje baze podataka. Preporučujemo dodavanje skripte ručno postavljanje baze podataka prije pokretanja projekta.# sky-sailor
-# sky-sailor
+The project does not include a database creation script. We recommend adding a script for setting up the database manually before running the project.
