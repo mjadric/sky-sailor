@@ -65,4 +65,4 @@ Ovaj projekt je licenciran pod MIT licencom - pogledajte [LICENSE.md](LICENSE.md
 
 ## Napomena
 
-Projekt ne sadrži skriptu za stvaranje baze podataka. Preporučujemo dodavanje skripte ručno postavljanje baze podataka prije pokretanja projekta.
+Projekt ne sadrži skriptu za stvaranje baze podataka. Preporučujemo dodavanje skripte ručno postavljanje baze podataka prije pokretanja projekta.# sky-sailor
